@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Video Watch Face</string>
+    <string name="watch_status">Watch is %s</string>
+    <string name="connected">connected</string>
+    <string name="not_connected">not connected</string>
+    <string name="permission_read_storage_rationale">We have to read your storage</string>
+    <string name="label_select_video">Choose video</string>
+    <string name="toast_cannot_retrieve_selected_video">Oops, we can\'t see this video</string>
+    <string name="permission_title_rationale">Access storage</string>
+    <string name="video_saved_at">Video saves at : $%1s</string>
+    <string name="trimming_progress">Trimming your video...</string>
+</resources>
