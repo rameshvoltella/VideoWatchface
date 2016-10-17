@@ -6,7 +6,7 @@
     android:background="@android:color/transparent"
     android:orientation="vertical">
 
-    <VideoView
+    <pl.droidsonroids.gif.GifImageView
         android:id="@+id/video_player"
         android:layout_width="260dp"
         android:layout_height="260dp" />
@@ -24,8 +24,8 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:src="@drawable/ic_send"
-            app:fab_colorNormal="@color/accent"
-            app:fab_colorPressed="@color/accent"
-            app:fab_colorRipple="@color/accent" />
+            app:fab_colorNormal="@color/fab_color_normal"
+            app:fab_colorPressed="@color/fab_ripple"
+            app:fab_colorRipple="@color/fab_ripple" />
     </RelativeLayout>
 </LinearLayout>

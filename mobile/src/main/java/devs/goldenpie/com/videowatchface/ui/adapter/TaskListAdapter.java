@@ -4,8 +4,8 @@ import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +13,9 @@ import android.view.ViewGroup;
 
 import com.activeandroid.Cache;
 import com.activeandroid.content.ContentProvider;
-import com.bumptech.glide.Glide;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,9 +23,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 import devs.goldenpie.com.videowatchface.R;
 import devs.goldenpie.com.videowatchface.model.VideoModel;
 import devs.goldenpie.com.videowatchface.ui.fragment.PreviewFragmentDialog;
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHolder> {
 
@@ -56,10 +59,13 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Glide.with(holder.preview.getContext())
-                .load(Uri.fromFile(new File(models.get(position).getPath())))
-                .placeholder(R.drawable.no_film_preview)
-                .into(holder.preview);
+        GifDrawable gifDrawable = null;
+        try {
+            gifDrawable = new GifDrawable(models.get(position).getPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        holder.preview.setImageDrawable(gifDrawable);
     }
 
     @Override
@@ -97,7 +103,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
 
     class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.preview)
-        protected AppCompatImageView preview;
+        protected GifImageView preview;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -108,6 +114,23 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         protected void onPreviewClick() {
             PreviewFragmentDialog.newInstance(models.get(getAdapterPosition()).getPath())
                     .show(((AppCompatActivity) itemView.getContext()).getSupportFragmentManager(), "preview_dialog");
+        }
+
+        @OnLongClick(R.id.preview)
+        protected boolean onLongPreviewClick() {
+            new AlertDialog.Builder(itemView.getContext())
+                    .setTitle("Remove this video?")
+                    .setMessage("Created video will be removed from the device and you will not can recover it")
+                    .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
+                        VideoModel videoModel = models.get(getAdapterPosition());
+                        File file = new File(videoModel.getPath());
+                        file.delete();
+                        videoModel.delete();
+                    })
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .create()
+                    .show();
+            return true;
         }
     }
 

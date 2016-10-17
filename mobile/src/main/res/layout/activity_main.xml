@@ -87,18 +87,18 @@
         android:padding="16dp"
         android:src="@drawable/ic_add"
         app:menu_backgroundColor="@color/fab_background"
-        app:menu_colorNormal="@color/accent"
-        app:menu_colorPressed="@color/accent"
-        app:menu_colorRipple="@color/accent">
+        app:menu_colorNormal="@color/fab_color_normal"
+        app:menu_colorPressed="@color/fab_ripple"
+        app:menu_colorRipple="@color/fab_ripple">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/record"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_movie_creation"
-            app:fab_colorNormal="@color/accent"
-            app:fab_colorPressed="@color/accent"
-            app:fab_colorRipple="@color/accent"
+            app:fab_colorNormal="@color/fab_color_normal"
+            app:fab_colorPressed="@color/fab_ripple"
+            app:fab_colorRipple="@color/fab_ripple"
             app:fab_label="Record video"
             app:fab_size="mini" />
 
@@ -107,9 +107,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_perm_media"
-            app:fab_colorNormal="@color/accent"
-            app:fab_colorPressed="@color/accent"
-            app:fab_colorRipple="@color/accent"
+            app:fab_colorNormal="@color/fab_color_normal"
+            app:fab_colorPressed="@color/fab_ripple"
+            app:fab_colorRipple="@color/fab_ripple"
             app:fab_label="Choose exist"
             app:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>

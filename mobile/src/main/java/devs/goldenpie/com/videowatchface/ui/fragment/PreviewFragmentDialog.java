@@ -7,13 +7,15 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.MediaController;
-import android.widget.VideoView;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.goldenpie.com.videowatchface.R;
 import fr.tvbarthel.lib.blurdialogfragment.SupportBlurDialogFragment;
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * @author anton
@@ -25,7 +27,7 @@ public class PreviewFragmentDialog extends SupportBlurDialogFragment {
     public static final String VIDEO_PATH = "video_path";
 
     @BindView(R.id.video_player)
-    VideoView videoPlayer;
+    protected GifImageView videoPlayer;
 
     public static PreviewFragmentDialog newInstance(String videoPath) {
 
@@ -49,11 +51,13 @@ public class PreviewFragmentDialog extends SupportBlurDialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        videoPlayer.setVideoPath(getArguments().getString(VIDEO_PATH));
-        videoPlayer.setMediaController(new MediaController(getContext()));
-        videoPlayer.requestFocus();
-        videoPlayer.setOnCompletionListener(mediaPlayer -> videoPlayer.start());
-        videoPlayer.start();
 
+        GifDrawable gifDrawable = null;
+        try {
+            gifDrawable = new GifDrawable(getArguments().getString(VIDEO_PATH));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        videoPlayer.setImageDrawable(gifDrawable);
     }
 }

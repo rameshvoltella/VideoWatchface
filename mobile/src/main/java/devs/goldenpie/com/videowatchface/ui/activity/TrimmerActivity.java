@@ -80,6 +80,7 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
         //setting progressbar
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setCancelable(false);
+        mProgressDialog.setTitle("Creating watch video");
         mProgressDialog.setMessage(getString(R.string.trimming_progress));
 
         mVideoTrimmer = ((K4LVideoTrimmer) findViewById(R.id.timeLine));
@@ -113,20 +114,19 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
 
         File originalVideo = new File(path);
         String filename = DESTINATION_PATH + FilenameUtils.getBaseName(path) + "_scaled."
-                + FilenameUtils.getExtension(path);
+                + "gif";
         File copy = new File(filename);
 
-        int g = 0;
+        int i = 0;
         while (copy.exists()) {
             copy = new File(String.format(Locale.getDefault(),
-                    "%s/%s_scaled_(%d).%s", DESTINATION_PATH, FilenameUtils.getBaseName(path), g,
-                    FilenameUtils.getExtension(path)));
-            g++;
+                    "%s/%s_scaled_(%d).gif", DESTINATION_PATH, FilenameUtils.getBaseName(path), i));
+            i++;
         }
 
         copy.createNewFile();
 
-        String cmd = "-y -v debug -i " + path + " -r 15 -vf scale=w=320:h=320:force_original_aspect_ratio=increase,crop=320:320 -threads 12 -an " + copy.getPath();
+        String cmd = "-y -v debug -i " + path + " -r 15 -vf scale=w=320:h=320:force_original_aspect_ratio=increase,crop=320:320 -threads 12 -gifflags +transdiff -y " + copy.getPath();
         String[] command = cmd.split(" ");
 
         File finalCopy = copy;
