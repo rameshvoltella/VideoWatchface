@@ -19,6 +19,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 import devs.goldenpie.com.videowatchface.R;
 import devs.goldenpie.com.videowatchface.model.VideoModel;
@@ -107,55 +108,28 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
     }
 
     private void scaleVideo(String path) throws FFmpegCommandAlreadyRunningException, IOException {
-        File copy = new File(DESTINATION_PATH + FilenameUtils.getBaseName(path) + "_scaled." + FilenameUtils.getExtension(path));
+        if (!mProgressDialog.isShowing())
+            mProgressDialog.show();
 
-        if (!copy.exists())
-            copy.createNewFile();
-
-        String cmd = "-i " + path + " -vf scale=320:-1 " + copy.getPath();
-        String[] command = cmd.split(" ");
-        fFmpeg.execute(command, new FFmpegExecuteResponseHandler() {
-            @Override
-            public void onSuccess(String message) {
-                Log.i("FFmpeg", message);
-                try {
-                    cropVideo(copy, path);
-                } catch (FFmpegCommandAlreadyRunningException | IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onProgress(String message) {
-                Log.i("FFmpeg", message);
-            }
-
-            @Override
-            public void onFailure(String message) {
-                Log.e("FFmpeg", message);
-            }
-
-            @Override
-            public void onStart() {
-                Log.i("FFmpeg", "on start");
-            }
-
-            @Override
-            public void onFinish() {
-                Log.i("FFmpeg", "on finish");
-            }
-        });
-    }
-
-    private void cropVideo(File input, String path) throws FFmpegCommandAlreadyRunningException, IOException {
         File originalVideo = new File(path);
-        File copy = new File(DESTINATION_PATH + FilenameUtils.getBaseName(input.getPath()) + "_cropped." + FilenameUtils.getExtension(input.getPath()));
+        String filename = DESTINATION_PATH + FilenameUtils.getBaseName(path) + "_scaled."
+                + FilenameUtils.getExtension(path);
+        File copy = new File(filename);
 
-        if (!copy.exists())
-            copy.createNewFile();
+        int g = 0;
+        while (copy.exists()) {
+            copy = new File(String.format(Locale.getDefault(),
+                    "%s/%s_scaled_(%d).%s", DESTINATION_PATH, FilenameUtils.getBaseName(path), g,
+                    FilenameUtils.getExtension(path)));
+        }
 
-        String cmd = "-i " + input.getPath() + " -vf crop=320:320 " + copy.getPath();
+        copy.createNewFile();
+
+        String cmd = "-y -v debug -i " + path + " -vf scale=w=320:h=320:force_original_aspect_ratio=increase -vf crop=320:320 -threads 12 " + copy.getPath();
         String[] command = cmd.split(" ");
+
+        File finalCopy = copy;
+
         fFmpeg.execute(command, new FFmpegExecuteResponseHandler() {
             @Override
             public void onSuccess(String message) {
@@ -163,14 +137,13 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
 
                 if (originalVideo.getParent().contains(VIDEO_WATCH_FACE))
                     originalVideo.delete();
-                copy.delete();
 
                 mProgressDialog.cancel();
 
-                runOnUiThread(() -> Toast.makeText(TrimmerActivity.this, getString(R.string.video_saved_at, copy.getPath()), Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(TrimmerActivity.this, getString(R.string.video_saved_at, finalCopy.getPath()), Toast.LENGTH_SHORT).show());
 
                 VideoModel videoModel = new VideoModel();
-                videoModel.setPath(copy.getPath());
+                videoModel.setPath(finalCopy.getPath());
                 videoModel.save();
 
                 finish();
@@ -178,12 +151,18 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
 
             @Override
             public void onProgress(String message) {
-                Log.i("FFmpeg", message);
+                String[] strings = message.split("\n");
+                for (String string : strings) {
+                    Log.i("FFmpeg", string);
+                }
             }
 
             @Override
             public void onFailure(String message) {
-                Log.e("FFmpeg", message);
+                String[] strings = message.split("\n");
+                for (String string : strings) {
+                    Log.e("FFmpeg", string);
+                }
             }
 
             @Override
