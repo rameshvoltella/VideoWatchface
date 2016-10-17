@@ -3,13 +3,27 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
+    signingConfigs {
+        release {
+            storeFile file('misc/release.keystore')
+            keyAlias 'sign'
+            keyPassword '2462789'
+            storePassword '2462789'
+        }
+        debug {
+            storeFile file('misc/debug.keystore')
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+    }
     defaultConfig {
         applicationId "devs.goldenpie.com.videowatchface"
-        minSdkVersion 21
-        targetSdkVersion 24
+        minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_WEAR_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
         versionCode 1
         versionName "1.0"
     }
@@ -17,6 +31,8 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            debuggable true
         }
     }
     compileOptions {
@@ -28,13 +44,13 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':teleportlib')
-
     compile 'com.google.android.support:wearable:2.0.0-alpha2'
     compile 'com.google.android.gms:play-services-wearable:9.6.1'
-    compile "org.projectlombok:lombok:1.16.10"
-    compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile 'org.projectlombok:lombok:1.16.10'
+    compile 'org.greenrobot:eventbus:3.0.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.2'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile project(':constants')
 }

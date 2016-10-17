@@ -1,16 +1,13 @@
 package devs.goldenpie.com.videowatchface.event;
 
-import devs.goldenpie.com.videowatchface.model.DataModel;
+import lombok.Getter;
 
 public class FileStoredEvent {
-    private DataModel dataModel;
 
-    public FileStoredEvent(DataModel model) {
-        dataModel = model;
+    @Getter
+    private String path;
+
+    public FileStoredEvent(String path) {
+        this.path = path;
     }
-
-    public DataModel getDataModel() {
-        return dataModel;
-    }
-
 }

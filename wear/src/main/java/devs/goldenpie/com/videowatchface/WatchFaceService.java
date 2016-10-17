@@ -23,36 +23,44 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowManager;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.constants.Constants;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.mariux.teleport.lib.TeleportClient;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import devs.goldenpie.com.R;
 import devs.goldenpie.com.videowatchface.event.FileStoredEvent;
-import devs.goldenpie.com.videowatchface.model.DataModel;
 import devs.goldenpie.com.videowatchface.modules.SortAndStore;
+import devs.goldenpie.com.videowatchface.utils.FileUtils;
+import devs.goldenpie.com.videowatchface.view.MagicTextView;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
 public class WatchFaceService extends CanvasWatchFaceService {
-
-    private GifImageView gifView;
 
     @Override
     public Engine onCreateEngine() {
         return new Engine();
     }
 
-    private class Engine extends CanvasWatchFaceService.Engine {
+    public class Engine extends CanvasWatchFaceService.Engine {
 
         static final int MSG_UPDATE_TIME = 0;
+        public static final String CLOCK_FORMAT = "%02d:%02d";
 
         final Handler mUpdateTimeHandler = new Handler() {
             @Override
@@ -64,19 +72,29 @@ public class WatchFaceService extends CanvasWatchFaceService {
                 }
             }
         };
+
         private final Point displaySize = new Point();
+
         boolean mRegisteredTimeZoneReceiver = false;
+
         float mXOffset = 0;
         float mYOffset = 0;
+
+        @BindView(R.id.gifView)
+        protected GifImageView gifView;
+        @BindView(R.id.clock)
+        protected MagicTextView textClock;
+        @BindView(R.id.largeClock)
+        protected TextView bigTextClock;
+
         private TeleportClient mTeleportClient;
-        private RelativeLayout loadingLayout;
         private View myLayout;
-        private TextView textClock;
-        private TextView bigTextClock;
-        private DataModel data = null;
+
         private int specW, specH;
+
         @SuppressWarnings("deprecation")
         private Time mTime;
+
         final BroadcastReceiver mTimeZoneReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -87,7 +105,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
         private Timer updateTimer = null;
 
-        private boolean isShowLoading = true;
+        private GifDrawable gifDrawable;
 
         @Override
         public void onCreate(SurfaceHolder holder) {
@@ -95,6 +113,17 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
             EventBus.getDefault().register(this);
             mTeleportClient = new TeleportClient(getApplicationContext());
+            mTeleportClient.getGoogleApiClient().registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                @Override
+                public void onConnected(Bundle bundle) {
+                    mTeleportClient.sendMessage(Constants.SERVICE_CONNECTED, null);
+                }
+
+                @Override
+                public void onConnectionSuspended(int i) {
+
+                }
+            });
             mTeleportClient.setOnSyncDataItemCallback(new SortAndStore(mTeleportClient));
             mTeleportClient.connect();
 
@@ -109,35 +138,41 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             myLayout = inflater.inflate(R.layout.watchface, null);
+            ButterKnife.bind(this, myLayout);
 
             Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
                     .getDefaultDisplay();
             display.getSize(displaySize);
 
-            textClock = (TextView) myLayout.findViewById(R.id.clock);
-            textClock.setTypeface(Typeface.createFromAsset(getAssets(), Constant.DEFAULT_FONT));
-            bigTextClock = (TextView) myLayout.findViewById(R.id.largeClock);
-            bigTextClock.setTypeface(Typeface.createFromAsset(getAssets(), Constant.DEFAULT_FONT));
-            loadingLayout = (RelativeLayout) myLayout.findViewById(R.id.loading_layout);
-            ((TextView) (myLayout.findViewById(R.id.textView))).setTypeface(Typeface.createFromAsset(getAssets(), Constant.DEFAULT_FONT));
-            gifView = (GifImageView) myLayout.findViewById(R.id.gifView);
+            textClock.setTypeface(Typeface.createFromAsset(getAssets(), Constants.DEFAULT_FONT));
+            bigTextClock.setTypeface(Typeface.createFromAsset(getAssets(), Constants.DEFAULT_FONT));
 
-            //TODO: Write to prefs some info. Save and restore gif file on wearable
+            File file = FileUtils.getFile();
+
+            if (file.exists())
+                try {
+                    gifDrawable = new GifDrawable(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             initTimer();
         }
 
-
-        @SuppressWarnings("unused")
-        public void onEventMainThread(FileStoredEvent event) {
-            data = event.getDataModel();
-
-            if (loadingLayout != null && isShowLoading) {
-                isShowLoading = false;
-                loadingLayout.setVisibility(View.GONE);
-                gifView.setImageDrawable(data.getGifDrawable());
-                invalidate();
+        @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onEven(FileStoredEvent event) {
+            try {
+                gifDrawable = new GifDrawable(event.getPath());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            playData();
+        }
+
+        private void playData() {
+            if (gifDrawable != null)
+                gifView.setImageDrawable(gifDrawable);
+            invalidate();
         }
 
         private void initTimer() {
@@ -145,12 +180,11 @@ public class WatchFaceService extends CanvasWatchFaceService {
             updateTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (data != null) {
-                        gifView.setImageDrawable(data.getGifDrawable());
-                    }
+                    if (gifDrawable != null)
+                        gifView.setImageDrawable(gifDrawable);
                     invalidate();
                 }
-            }, 0, Constant.FRAME_RATE_DELAY);
+            }, 0, Constants.FRAME_RATE_DELAY);
         }
 
         private void cancelTimer() {
@@ -167,7 +201,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
         }
 
         private void sendDisconnectRequest() {
-            mTeleportClient.sendMessage(Constant.DISCONNECT_REQUEST, null);
+            mTeleportClient.sendMessage(Constants.DISCONNECT_REQUEST, null);
         }
 
         @Override
@@ -207,7 +241,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
                 cancelTimer();
                 ((GifDrawable) gifView.getDrawable()).pause();
             }
-//            invalidate();
             updateTimer();
             Log.i("VieWatchFace", "Ambient changed");
         }
@@ -219,23 +252,18 @@ public class WatchFaceService extends CanvasWatchFaceService {
             if (!isInAmbientMode()) {
                 gifView.setVisibility(View.VISIBLE);
                 bigTextClock.setVisibility(View.INVISIBLE);
-                if (isShowLoading)
-                    loadingLayout.setVisibility(View.VISIBLE);
                 textClock.setVisibility(View.VISIBLE);
             } else {
                 bigTextClock.setVisibility(View.VISIBLE);
                 textClock.setVisibility(View.INVISIBLE);
-                if (isShowLoading)
-                    loadingLayout.setVisibility(View.INVISIBLE);
                 gifView.setVisibility(View.INVISIBLE);
             }
 
-            textClock.setText(String.format(Locale.getDefault(), "%02d:%02d", mTime.hour, mTime.minute));
-            bigTextClock.setText(String.format(Locale.getDefault(), "%02d:%02d", mTime.hour, mTime.minute));
+            textClock.setText(String.format(Locale.getDefault(), CLOCK_FORMAT, mTime.hour, mTime.minute));
+            bigTextClock.setText(String.format(Locale.getDefault(), CLOCK_FORMAT, mTime.hour, mTime.minute));
 
             myLayout.measure(specW, specH);
             myLayout.layout(0, 0, myLayout.getMeasuredWidth(), myLayout.getMeasuredHeight());
-
 
             canvas.drawColor(Color.BLACK);
             canvas.translate(mXOffset, mYOffset);
@@ -268,9 +296,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
             mRegisteredTimeZoneReceiver = true;
             IntentFilter filter = new IntentFilter(Intent.ACTION_TIMEZONE_CHANGED);
             WatchFaceService.this.registerReceiver(mTimeZoneReceiver, filter);
-
-//            filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-//            WatchFaceService.this.registerReceiver(mPowerConnectionReceiver, filter);
         }
 
         private void unregisterReceiver() {
@@ -279,7 +304,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
             }
             mRegisteredTimeZoneReceiver = false;
             WatchFaceService.this.unregisterReceiver(mTimeZoneReceiver);
-//            WatchFaceService.this.unregisterReceiver(mPowerConnectionReceiver);
         }
 
         private void updateTimer() {

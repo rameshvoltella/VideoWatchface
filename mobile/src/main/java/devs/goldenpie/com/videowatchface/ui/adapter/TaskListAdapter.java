@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.activeandroid.Cache;
 import com.activeandroid.content.ContentProvider;
+import com.mariux.teleport.lib.TeleportClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
     private ContentListener contentListener;
 
     private LayoutInflater inflater;
+    private TeleportClient teleportClient;
+
     private List<VideoModel> models = new ArrayList<>();
 
     private final ContentObserver contentObserver = new ContentObserver(new Handler()) {
@@ -45,7 +48,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         }
     };
 
-    public TaskListAdapter(Context context) {
+    public TaskListAdapter(Context context, TeleportClient mTeleportClient) {
+        this.teleportClient = mTeleportClient;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         Uri uri = ContentProvider.createUri(VideoModel.class, null);
@@ -112,7 +116,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
 
         @OnClick(R.id.preview)
         protected void onPreviewClick() {
-            PreviewFragmentDialog.newInstance(models.get(getAdapterPosition()).getPath())
+            PreviewFragmentDialog.newInstance(models.get(getAdapterPosition()).getPath(), teleportClient)
                     .show(((AppCompatActivity) itemView.getContext()).getSupportFragmentManager(), "preview_dialog");
         }
 

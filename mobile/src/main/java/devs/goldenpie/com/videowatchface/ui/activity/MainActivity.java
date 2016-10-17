@@ -24,6 +24,7 @@ import com.github.hiteshsondhi88.libffmpeg.FFmpegLoadBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 import com.google.android.gms.wearable.Node;
+import com.mariux.teleport.lib.TeleportClient;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -62,13 +63,15 @@ public class MainActivity extends BaseActivity implements TaskListAdapter.Conten
 
     private boolean pickVideo = false;
     private ProgressDialog mProgressDialog;
+    private TeleportClient mTeleportClient;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        DetectWear.init(this);
+        mTeleportClient = new TeleportClient(this);
+        DetectWear.init(this, mTeleportClient);
 
         status.setText(getString(R.string.watch_status, getString(R.string.not_connected)));
 
@@ -77,8 +80,20 @@ public class MainActivity extends BaseActivity implements TaskListAdapter.Conten
         DetectWear.setNodesListener(this);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mTeleportClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mTeleportClient.disconnect();
+    }
+
     private void setupList() {
-        adapter = new TaskListAdapter(this);
+        adapter = new TaskListAdapter(this, mTeleportClient);
         adapter.setContentListener(this);
         adapter.updateSelf();
 

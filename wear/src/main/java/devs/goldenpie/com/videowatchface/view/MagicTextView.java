@@ -26,7 +26,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.WeakHashMap;
 
-import devs.goldenpie.com.videowatchface.R;
+import devs.goldenpie.com.R;
 
 public class MagicTextView extends TextView {
     private ArrayList<Shadow> outerShadows;

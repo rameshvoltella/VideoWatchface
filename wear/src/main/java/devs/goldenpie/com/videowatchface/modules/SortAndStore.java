@@ -1,14 +1,17 @@
 package devs.goldenpie.com.videowatchface.modules;
 
+import android.os.Environment;
 import android.util.Log;
 
+import com.constants.Constants;
 import com.google.android.gms.wearable.DataMap;
 import com.mariux.teleport.lib.TeleportClient;
-import com.watchfacelib.Constant;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,7 +21,7 @@ import java.util.List;
 import devs.goldenpie.com.videowatchface.event.FileStoredEvent;
 import devs.goldenpie.com.videowatchface.model.BytesPart;
 import devs.goldenpie.com.videowatchface.model.DataModel;
-import pl.droidsonroids.gif.GifDrawable;
+import devs.goldenpie.com.videowatchface.utils.FileUtils;
 
 public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
     private static final String TAG = "SortAndStore";
@@ -43,11 +46,11 @@ public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
 
         Log.i(TAG, dataMap.toString());
 
-        String description = dataMap.getString(Constant.VIDEO_DESCRIPTION);
-        String author = dataMap.getString(Constant.VIDEO_AUTHOR);
-        byte[] partOfData = dataMap.getByteArray(Constant.BYTE_ARRAY_PART);
-        int partNum = dataMap.getInt(Constant.BYTE_ARRAY_PART_NUMBER);
-        int fullPart = dataMap.getInt(Constant.VIDEO_FULL_PARTS);
+        String description = dataMap.getString(Constants.VIDEO_DESCRIPTION);
+        String author = dataMap.getString(Constants.VIDEO_AUTHOR);
+        byte[] partOfData = dataMap.getByteArray(Constants.BYTE_ARRAY_PART);
+        int partNum = dataMap.getInt(Constants.BYTE_ARRAY_PART_NUMBER);
+        int fullPart = dataMap.getInt(Constants.VIDEO_FULL_PARTS);
         boolean containsVideo = false;
 
         BytesPart bp = new BytesPart();
@@ -120,7 +123,7 @@ public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
             Log.i(TAG, "Make video file end");
 
             try {
-                storeGifFile(bytes, model);
+                storeGifFile(bytes);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -129,15 +132,14 @@ public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
     }
 
     //    @DebugLog
-    private void storeGifFile(byte[] bytes, DataModel model) throws IOException {
+    private void storeGifFile(byte[] bytes) throws IOException {
         Log.i(TAG, "Store video file begin");
 
-        model.setGifDrawable(new GifDrawable(bytes));
+        File file = FileUtils.writeByteToFile(bytes);
 
         Log.i(TAG, "Store video file end");
         Log.i(TAG, "Post event begin");
-        if (model.getGifDrawable() != null)
-            EventBus.getDefault().post(new FileStoredEvent(model));
+        EventBus.getDefault().post(new FileStoredEvent(file.getPath()));
         Log.i(TAG, "Post event end");
     }
 
