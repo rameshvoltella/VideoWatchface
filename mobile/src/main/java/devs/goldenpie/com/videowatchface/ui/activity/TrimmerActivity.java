@@ -121,11 +121,12 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
             copy = new File(String.format(Locale.getDefault(),
                     "%s/%s_scaled_(%d).%s", DESTINATION_PATH, FilenameUtils.getBaseName(path), g,
                     FilenameUtils.getExtension(path)));
+            g++;
         }
 
         copy.createNewFile();
 
-        String cmd = "-y -v debug -i " + path + " -vf scale=w=320:h=320:force_original_aspect_ratio=increase -vf crop=320:320 -threads 12 " + copy.getPath();
+        String cmd = "-y -v debug -i " + path + " -r 15 -vf scale=w=320:h=320:force_original_aspect_ratio=increase,crop=320:320 -threads 12 -an " + copy.getPath();
         String[] command = cmd.split(" ");
 
         File finalCopy = copy;

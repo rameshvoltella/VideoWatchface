@@ -4,12 +4,12 @@ import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.activeandroid.Cache;
 import com.activeandroid.content.ContentProvider;
@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -24,7 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import devs.goldenpie.com.videowatchface.R;
 import devs.goldenpie.com.videowatchface.model.VideoModel;
-import devs.goldenpie.com.videowatchface.utils.DetectWear;
+import devs.goldenpie.com.videowatchface.ui.fragment.PreviewFragmentDialog;
 
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHolder> {
 
@@ -69,6 +70,9 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
     public void updateSelf() {
         models.clear();
         models.addAll(VideoModel.getAll());
+
+        Collections.reverse(models);
+
         notifyDataSetChanged();
 
         if (contentListener != null)
@@ -91,7 +95,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         return this;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.preview)
         protected AppCompatImageView preview;
 
@@ -102,11 +106,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
 
         @OnClick(R.id.preview)
         protected void onPreviewClick() {
-            if (DetectWear.isConnected()) {
-                //TODO: Open blured dialog with video and send button
-            } else {
-                Toast.makeText(itemView.getContext(), "Watch is not connected", Toast.LENGTH_SHORT).show();
-            }
+            PreviewFragmentDialog.newInstance(models.get(getAdapterPosition()).getPath())
+                    .show(((AppCompatActivity) itemView.getContext()).getSupportFragmentManager(), "preview_dialog");
         }
     }
 
