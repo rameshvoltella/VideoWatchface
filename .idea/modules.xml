@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/FFmpegAndroid/FFmpegAndroid.iml" filepath="$PROJECT_DIR$/FFmpegAndroid/FFmpegAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/VideoWatchface_2.iml" filepath="$PROJECT_DIR$/VideoWatchface_2.iml" />
       <module fileurl="file://$PROJECT_DIR$/mobile/mobile.iml" filepath="$PROJECT_DIR$/mobile/mobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/teleportlib/teleportlib.iml" filepath="$PROJECT_DIR$/teleportlib/teleportlib.iml" />

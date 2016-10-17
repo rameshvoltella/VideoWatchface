@@ -1,1 +1,1 @@
-include ':mobile', ':wear', ':teleportlib'
+include ':mobile', ':wear', ':teleportlib', ':FFmpegAndroid'
