@@ -61,7 +61,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="No WatchFace history\n\nAdd first video\nto set it as WatchFace"
+                    android:text="@string/no_watchface_history_n_nadd_first_video_nto_set_it_as_watchface"
                     android:textColor="@color/secondary_text"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -99,18 +99,29 @@
             app:fab_colorNormal="@color/fab_color_normal"
             app:fab_colorPressed="@color/fab_ripple"
             app:fab_colorRipple="@color/fab_ripple"
-            app:fab_label="Record video"
+            app:fab_label="@string/record_video"
             app:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/select"
+            android:id="@+id/select_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_video_library"
+            app:fab_colorNormal="@color/fab_color_normal"
+            app:fab_colorPressed="@color/fab_ripple"
+            app:fab_colorRipple="@color/fab_ripple"
+            app:fab_label="@string/choose_exist_video"
+            app:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/select_gif"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_perm_media"
             app:fab_colorNormal="@color/fab_color_normal"
             app:fab_colorPressed="@color/fab_ripple"
             app:fab_colorRipple="@color/fab_ripple"
-            app:fab_label="Choose exist"
+            app:fab_label="@string/choose_exist_gif"
             app:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
 </RelativeLayout>

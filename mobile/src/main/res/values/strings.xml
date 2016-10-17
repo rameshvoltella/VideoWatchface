@@ -8,5 +8,14 @@
     <string name="toast_cannot_retrieve_selected_video">Oops, we can\'t see this video</string>
     <string name="permission_title_rationale">Access storage</string>
     <string name="video_saved_at">Video saves at : $%1s</string>
-    <string name="trimming_progress">Trimming, cutting and scaling your video…\nIt can take a while, please be patient</string>
+    <string name="video_trimming_progress">Trimming, cutting and scaling your video…\nIt can take a while, please be patient</string>
+    <string name="gif_trimming_progress">Cutting and scaling your gif…\nIt can take a while, please be patient</string>
+    <string name="label_select_gif">Choose gif</string>
+    <string name="all_done">All done</string>
+    <string name="choose_watch_gif">Creating watch gif</string>
+    <string name="choose_watch_video">Creating watch video</string>
+    <string name="choose_exist_gif">Choose exist GIF</string>
+    <string name="choose_exist_video">Choose exist video</string>
+    <string name="record_video">Record video</string>
+    <string name="no_watchface_history_n_nadd_first_video_nto_set_it_as_watchface">No WatchFace history\n\nAdd first video\nto set it as WatchFace</string>
 </resources>

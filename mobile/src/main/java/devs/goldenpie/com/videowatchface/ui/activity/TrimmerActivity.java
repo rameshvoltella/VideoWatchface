@@ -29,7 +29,7 @@ import life.knowledge4.videotrimmer.interfaces.OnTrimVideoListener;
 
 public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoListener, OnK4LVideoListener {
 
-    private static final String VIDEO_WATCH_FACE = ".VideoWatchFace";
+    public static final String VIDEO_WATCH_FACE = ".VideoWatchFace";
     public static final String DESTINATION_PATH = Environment.getExternalStorageDirectory() + File.separator + VIDEO_WATCH_FACE + File.separator;
 
     private K4LVideoTrimmer mVideoTrimmer;
@@ -80,8 +80,8 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
         //setting progressbar
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setCancelable(false);
-        mProgressDialog.setTitle("Creating watch video");
-        mProgressDialog.setMessage(getString(R.string.trimming_progress));
+        mProgressDialog.setTitle(getString(R.string.choose_watch_video));
+        mProgressDialog.setMessage(getString(R.string.video_trimming_progress));
 
         mVideoTrimmer = ((K4LVideoTrimmer) findViewById(R.id.timeLine));
         if (mVideoTrimmer != null) {
@@ -141,7 +141,7 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
 
                 mProgressDialog.cancel();
 
-                runOnUiThread(() -> Toast.makeText(TrimmerActivity.this, getString(R.string.video_saved_at, finalCopy.getPath()), Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(TrimmerActivity.this, R.string.all_done, Toast.LENGTH_SHORT).show());
 
                 VideoModel videoModel = new VideoModel();
                 videoModel.setPath(finalCopy.getPath());
