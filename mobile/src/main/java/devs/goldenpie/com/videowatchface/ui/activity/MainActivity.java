@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity implements TaskListAdapter.Conten
     @BindView(R.id.selected_gif)
     protected GifImageView selectedGif;
     @BindView(R.id.remove_button)
-    protected AppCompatImageView removeButton;
+    protected View removeButton;
 
     private TaskListAdapter adapter;
 
@@ -359,7 +359,7 @@ public class MainActivity extends BaseActivity implements TaskListAdapter.Conten
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onWatchFaceSended(WatchFaceSenderEvent event) {
+    public void onWatchFaceSended(WatchFaceSenderEvent event) {
         applicationPreference.setCurrentGif(event.getPath());
         try {
             selectedGif.setImageDrawable(new GifDrawable(event.getPath()));
