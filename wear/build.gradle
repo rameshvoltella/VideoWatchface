@@ -44,6 +44,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':teleportlib')
+    compile project(':constants')
     compile 'com.google.android.support:wearable:2.0.0-alpha2'
     compile 'com.google.android.gms:play-services-wearable:9.6.1'
     compile 'com.jakewharton:butterknife:8.4.0'
@@ -52,5 +53,5 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.2'
     compile 'org.apache.commons:commons-lang3:3.4'
-    compile project(':constants')
+    compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
 }

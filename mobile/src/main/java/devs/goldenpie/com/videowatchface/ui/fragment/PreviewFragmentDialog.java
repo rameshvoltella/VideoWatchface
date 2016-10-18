@@ -78,7 +78,7 @@ public class PreviewFragmentDialog extends SupportBlurDialogFragment {
     protected void onFabClick() {
         if (DetectWear.isConnected())
             try {
-                ShareService.getInstance(teleportClient).sendGif(getArguments().getString(VIDEO_PATH));
+                ShareService.getInstance(teleportClient, getContext()).sendGif(getArguments().getString(VIDEO_PATH));
             } catch (IOException e) {
                 e.printStackTrace();
             }

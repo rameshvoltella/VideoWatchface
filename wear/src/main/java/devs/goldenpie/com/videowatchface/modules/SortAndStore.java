@@ -1,6 +1,5 @@
 package devs.goldenpie.com.videowatchface.modules;
 
-import android.os.Environment;
 import android.util.Log;
 
 import com.constants.Constants;
@@ -10,8 +9,6 @@ import com.mariux.teleport.lib.TeleportClient;
 import org.apache.commons.lang3.ArrayUtils;
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,7 +18,7 @@ import java.util.List;
 import devs.goldenpie.com.videowatchface.event.FileStoredEvent;
 import devs.goldenpie.com.videowatchface.model.BytesPart;
 import devs.goldenpie.com.videowatchface.model.DataModel;
-import devs.goldenpie.com.videowatchface.utils.FileUtils;
+import devs.goldenpie.com.videowatchface.model.FileModel;
 
 public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
     private static final String TAG = "SortAndStore";
@@ -39,8 +36,7 @@ public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
         mTeleportClient.setOnSyncDataItemCallback(this);
     }
 
-    //    @DebugLog
-    public void organizeData(DataMap dataMap) {
+    private void organizeData(DataMap dataMap) {
         Log.i(TAG, String.valueOf(Calendar.getInstance().getTimeInMillis()));
         Log.i(TAG, "Organize video file begin");
 
@@ -135,15 +131,22 @@ public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
     private void storeGifFile(byte[] bytes) throws IOException {
         Log.i(TAG, "Store video file begin");
 
-        File file = FileUtils.writeByteToFile(bytes);
+        FileModel fileModel;
+        if (FileModel.isExist()) {
+            fileModel = FileModel.getFileModel();
+        } else {
+            fileModel = new FileModel();
+        }
+        fileModel.setData(bytes);
+        fileModel.save();
 
         Log.i(TAG, "Store video file end");
         Log.i(TAG, "Post event begin");
-        EventBus.getDefault().post(new FileStoredEvent(file.getPath()));
+        EventBus.getDefault().post(new FileStoredEvent(fileModel));
         Log.i(TAG, "Post event end");
     }
 
-    public void sortBytes(ArrayList<BytesPart> bytesPartArrayList) {
+    private void sortBytes(ArrayList<BytesPart> bytesPartArrayList) {
         Collections.sort(bytesPartArrayList, (bytesPart, bytesPart2) -> bytesPart.getPosition() - bytesPart2.getPosition());
     }
 }

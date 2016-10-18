@@ -33,7 +33,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -44,8 +43,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.goldenpie.com.R;
 import devs.goldenpie.com.videowatchface.event.FileStoredEvent;
+import devs.goldenpie.com.videowatchface.model.FileModel;
 import devs.goldenpie.com.videowatchface.modules.SortAndStore;
-import devs.goldenpie.com.videowatchface.utils.FileUtils;
 import devs.goldenpie.com.videowatchface.view.MagicTextView;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
@@ -60,7 +59,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
     public class Engine extends CanvasWatchFaceService.Engine {
 
         static final int MSG_UPDATE_TIME = 0;
-        public static final String CLOCK_FORMAT = "%02d:%02d";
+        static final String CLOCK_FORMAT = "%02d:%02d";
 
         final Handler mUpdateTimeHandler = new Handler() {
             @Override
@@ -81,11 +80,11 @@ public class WatchFaceService extends CanvasWatchFaceService {
         float mYOffset = 0;
 
         @BindView(R.id.gifView)
-        protected GifImageView gifView;
+        GifImageView gifView;
         @BindView(R.id.clock)
-        protected MagicTextView textClock;
+        MagicTextView textClock;
         @BindView(R.id.largeClock)
-        protected TextView bigTextClock;
+        TextView bigTextClock;
 
         private TeleportClient mTeleportClient;
         private View myLayout;
@@ -121,7 +120,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
                 @Override
                 public void onConnectionSuspended(int i) {
-
                 }
             });
             mTeleportClient.setOnSyncDataItemCallback(new SortAndStore(mTeleportClient));
@@ -147,22 +145,21 @@ public class WatchFaceService extends CanvasWatchFaceService {
             textClock.setTypeface(Typeface.createFromAsset(getAssets(), Constants.DEFAULT_FONT));
             bigTextClock.setTypeface(Typeface.createFromAsset(getAssets(), Constants.DEFAULT_FONT));
 
-            File file = FileUtils.getFile();
-
-            if (file.exists())
+            if (FileModel.isExist())
                 try {
-                    gifDrawable = new GifDrawable(file);
+                    gifDrawable = new GifDrawable(FileModel.getFile());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+            playData();
             initTimer();
         }
 
         @Subscribe(threadMode = ThreadMode.MAIN)
         public void onEven(FileStoredEvent event) {
+            mTeleportClient.setOnSyncDataItemCallback(new SortAndStore(mTeleportClient));
             try {
-                gifDrawable = new GifDrawable(event.getPath());
+                gifDrawable = new GifDrawable(event.getFileModel().getData());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -172,7 +169,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
         private void playData() {
             if (gifDrawable != null)
                 gifView.setImageDrawable(gifDrawable);
-            invalidate();
         }
 
         private void initTimer() {
@@ -180,8 +176,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
             updateTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (gifDrawable != null)
-                        gifView.setImageDrawable(gifDrawable);
                     invalidate();
                 }
             }, 0, Constants.FRAME_RATE_DELAY);

@@ -18,4 +18,5 @@
     <string name="choose_exist_video">Choose exist video</string>
     <string name="record_video">Record video</string>
     <string name="no_watchface_history_n_nadd_first_video_nto_set_it_as_watchface">No WatchFace history\n\nAdd first video\nto set it as WatchFace</string>
+    <string name="uploading_watchface">Uploading your Watch Face</string>
 </resources>

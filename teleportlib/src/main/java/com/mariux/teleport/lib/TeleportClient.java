@@ -39,6 +39,7 @@ public class TeleportClient implements DataApi.DataListener,
         GoogleApiClient.OnConnectionFailedListener {
 
 
+    private DataShareListener listener;
     private static final String TAG = "TeleportClient";
 
     private GoogleApiClient mGoogleApiClient;
@@ -191,8 +192,10 @@ public class TeleportClient implements DataApi.DataListener,
                         if (!dataItemResult.getStatus().isSuccess()) {
                             Log.e(TAG, "ERROR: failed to putDataItem, status code: "
                                     + dataItemResult.getStatus().getStatusCode());
+                        } else {
+                            if (listener != null)
+                                listener.onShareComplete();
                         }
-
                     }
                 });
     }
@@ -231,6 +234,10 @@ public class TeleportClient implements DataApi.DataListener,
      */
     public void setOnSyncDataItemCallback(OnSyncDataItemCallback onSyncDataItemCallback) {
         this.onSyncDataItemCallback = onSyncDataItemCallback;
+    }
+
+    public void setListener(DataShareListener listener) {
+        this.listener = listener;
     }
 
 
@@ -321,13 +328,13 @@ public class TeleportClient implements DataApi.DataListener,
 
         boolean flagHandled = false;
 
-        if(onGetMessageTaskBuilder != null) {
+        if (onGetMessageTaskBuilder != null) {
             String path = messageEvent.getPath();
             onGetMessageTaskBuilder.build().execute(path);
             flagHandled = true;
         }
 
-        if(!flagHandled && onGetMessageCallback != null) {
+        if (!flagHandled && onGetMessageCallback != null) {
             String messagePath = messageEvent.getPath();
             onGetMessageCallback.onCallback(messagePath);
             flagHandled = true;
@@ -434,6 +441,10 @@ public class TeleportClient implements DataApi.DataListener,
         @Override
         protected abstract void onPostExecute(Bitmap bitmap);
 
+    }
+
+    public interface DataShareListener {
+        void onShareComplete();
     }
 
     ;

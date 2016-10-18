@@ -16,11 +16,32 @@
             android:background="@color/primary">
 
             <android.support.v7.widget.AppCompatImageView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
                 android:layout_marginBottom="40dp"
                 android:layout_marginTop="16dp"
+                android:paddingLeft="4dp"
                 app:srcCompat="@drawable/logo" />
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/selected_gif"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="40dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/base_anim" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/remove_button"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="40dp"
+                android:layout_marginTop="16dp"
+                android:padding="18dp"
+                app:srcCompat="@drawable/ic_delete" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/status_textview"

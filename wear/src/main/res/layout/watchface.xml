@@ -14,7 +14,7 @@
             android:id="@+id/gifView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/animation" />
+            android:src="@drawable/base_anim" /><!---->
 
         <devs.goldenpie.com.videowatchface.view.MagicTextView
             android:id="@+id/clock"
@@ -22,7 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="-16dp"
             android:gravity="center_vertical|center_horizontal"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#fff"
@@ -39,7 +38,7 @@
             android:layout_centerVertical="true"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="56sp"
+            android:textSize="64sp"
             tools:text="10.10" />
     </RelativeLayout>
 </LinearLayout>

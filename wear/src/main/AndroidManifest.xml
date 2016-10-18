@@ -9,6 +9,7 @@
     <uses-permission android:name="com.google.android.permission.PROVIDE_BACKGROUND" />
 
     <application
+        android:name=".videowatchface.WearApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -32,6 +33,13 @@
                 <category android:name="com.google.android.wearable.watchface.category.WATCH_FACE" />
             </intent-filter>
         </service>
+
+        <meta-data
+            android:name="AA_DB_NAME"
+            android:value="WearData.db" />
+        <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="1" />
 
         <meta-data
             android:name="com.google.android.gms.version"

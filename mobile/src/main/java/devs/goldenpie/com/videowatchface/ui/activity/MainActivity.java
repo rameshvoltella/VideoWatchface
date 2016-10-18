@@ -10,9 +10,11 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -27,6 +29,9 @@ import com.google.android.gms.wearable.Node;
 import com.mariux.teleport.lib.TeleportClient;
 
 import org.apache.commons.io.FilenameUtils;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,9 +43,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import devs.goldenpie.com.videowatchface.R;
 import devs.goldenpie.com.videowatchface.model.VideoModel;
+import devs.goldenpie.com.videowatchface.model.WatchFaceSenderEvent;
 import devs.goldenpie.com.videowatchface.ui.adapter.TaskListAdapter;
+import devs.goldenpie.com.videowatchface.utils.ApplicationPreference;
 import devs.goldenpie.com.videowatchface.utils.DetectWear;
 import life.knowledge4.videotrimmer.utils.FileUtils;
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * Created by EvilDev on 14.10.2016.
@@ -58,6 +67,10 @@ public class MainActivity extends BaseActivity implements TaskListAdapter.Conten
     protected AppCompatTextView status;
     @BindView(R.id.fab)
     protected FloatingActionMenu actionMenu;
+    @BindView(R.id.selected_gif)
+    protected GifImageView selectedGif;
+    @BindView(R.id.remove_button)
+    protected AppCompatImageView removeButton;
 
     private TaskListAdapter adapter;
 
@@ -65,19 +78,32 @@ public class MainActivity extends BaseActivity implements TaskListAdapter.Conten
     private ProgressDialog mProgressDialog;
     private TeleportClient mTeleportClient;
 
+    private ApplicationPreference applicationPreference;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         mTeleportClient = new TeleportClient(this);
-        DetectWear.init(this, mTeleportClient);
+        DetectWear.init(this);
 
         status.setText(getString(R.string.watch_status, getString(R.string.not_connected)));
 
         setupList();
-
+        applicationPreference = new ApplicationPreference(this);
         DetectWear.setNodesListener(this);
+
+        if (!TextUtils.isEmpty(applicationPreference.getCurrentGif())) {
+            try {
+                selectedGif.setImageDrawable(new GifDrawable(applicationPreference.getCurrentGif()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            removeButton.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -100,6 +126,21 @@ public class MainActivity extends BaseActivity implements TaskListAdapter.Conten
         list.setAdapter(adapter);
 
         list.setLayoutManager(new GridLayoutManager(this, 3));
+    }
+
+    @OnClick(R.id.remove_button)
+    protected void onRemoveClick() {
+        applicationPreference.setCurrentGif("");
+
+        try {
+            selectedGif.setImageDrawable(new GifDrawable(getResources(), R.drawable.base_anim));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        removeButton.setVisibility(View.GONE);
+
+        //TODO: Send message to watch
     }
 
     @OnClick(R.id.record)
@@ -315,5 +356,16 @@ public class MainActivity extends BaseActivity implements TaskListAdapter.Conten
             actionMenu.close(true);
         else
             super.onBackPressed();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    protected void onWatchFaceSended(WatchFaceSenderEvent event) {
+        applicationPreference.setCurrentGif(event.getPath());
+        try {
+            selectedGif.setImageDrawable(new GifDrawable(event.getPath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        removeButton.setVisibility(View.VISIBLE);
     }
 }

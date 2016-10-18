@@ -4,12 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.constants.Constants;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
-import com.mariux.teleport.lib.TeleportClient;
 
 import java.util.ArrayList;
 
@@ -43,20 +41,14 @@ public class DetectWear {
     private static GoogleApiClient mGoogleApiClient;
     private static NodeConnectionState connectionState = NodeConnectionState.Undetermined;
 
-    private static boolean isWatchfaceSelected = false;
+    private enum NodeConnectionState {Connected, NotConnected, Undetermined}
 
-    private static TeleportClient teleportClient;
-
-    public static enum NodeConnectionState {Connected, NotConnected, Undetermined}
-
-    public static void init(final Context context, TeleportClient mTeleportClient) {
-        teleportClient = mTeleportClient;
-        mTeleportClient.setOnGetMessageTask(new MessageListener());
+    public static void init(final Context context) {
         initGoogleApiClient(context);
     }
 
     public static boolean isConnected() {
-        return nodesList.size() > 0 && isWatchfaceSelected;
+        return nodesList.size() > 0;
     }
 
     public static NodeConnectionState getConnectionState() {
@@ -148,20 +140,24 @@ public class DetectWear {
 
         void onNewConnectedNode(Node node);
     }
-
-    public static class MessageListener extends TeleportClient.OnGetMessageTask {
-        @Override
-        protected void onPostExecute(String path) {
-            switch (path) {
-                case Constants.SERVICE_CONNECTED:
-                    isWatchfaceSelected = true;
-                    break;
-                case Constants.DISCONNECT_REQUEST:
-                    isWatchfaceSelected = false;
-                    break;
-
-            }
-            teleportClient.setOnGetMessageTask(new MessageListener());
-        }
-    }
+//
+//    private static class MessageListener extends TeleportClient.OnGetMessageTask {
+//        @Override
+//        protected void onPostExecute(String path) {
+//            switch (path) {
+//                case Constants.SERVICE_CONNECTED:
+//                    isWatchfaceSelected = true;
+//                    break;
+//                case Constants.DISCONNECT_REQUEST:
+//                    isWatchfaceSelected = false;
+//                    break;
+//
+//            }
+//
+//            if (nodesListener != null)
+//                nodesListener.nodesChanged(null);
+//
+//            teleportClient.setOnGetMessageTask(new MessageListener());
+//        }
+//    }
 }
