@@ -11,7 +11,6 @@
     <application
         android:name=".videowatchface.WearApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.DeviceDefault">
         <service
@@ -23,10 +22,10 @@
                 android:resource="@xml/watch_face" />
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview"
-                android:resource="@drawable/preview_img" />
+                android:resource="@drawable/watchface_preview" />
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview_circular"
-                android:resource="@drawable/preview_img" />
+                android:resource="@drawable/watchface_preview_round" />
 
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />

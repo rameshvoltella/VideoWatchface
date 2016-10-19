@@ -109,6 +109,8 @@ public class MainActivity extends BaseActivity implements WatchFaceAdapter.Conte
         } else {
             removeButton.setVisibility(View.GONE);
         }
+
+        actionMenu.setClosedOnTouchOutside(true);
     }
 
     @Override
