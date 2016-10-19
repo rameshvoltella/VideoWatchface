@@ -19,7 +19,8 @@ public class FileModel extends Model {
     private byte[] data;
 
     public static boolean isExist() {
-        return new Select().from(FileModel.class).exists();
+        FileModel fileModel = getFileModel();
+        return fileModel != null;
     }
 
     public static byte[] getFile() {
