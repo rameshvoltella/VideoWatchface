@@ -44,6 +44,7 @@ import butterknife.ButterKnife;
 import devs.goldenpie.com.R;
 import devs.goldenpie.com.videowatchface.event.FileStoredEvent;
 import devs.goldenpie.com.videowatchface.model.FileModel;
+import devs.goldenpie.com.videowatchface.model.RemoveWatchFaceEvent;
 import devs.goldenpie.com.videowatchface.modules.SortAndStore;
 import devs.goldenpie.com.videowatchface.view.MagicTextView;
 import pl.droidsonroids.gif.GifDrawable;
@@ -160,6 +161,17 @@ public class WatchFaceService extends CanvasWatchFaceService {
             mTeleportClient.setOnSyncDataItemCallback(new SortAndStore(mTeleportClient));
             try {
                 gifDrawable = new GifDrawable(event.getFileModel().getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            playData();
+        }
+
+        @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onEven(RemoveWatchFaceEvent event) {
+            mTeleportClient.setOnSyncDataItemCallback(new SortAndStore(mTeleportClient));
+            try {
+                gifDrawable = new GifDrawable(getResources(), R.drawable.base_anim);
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -262,8 +262,8 @@ public class MagicTextView extends TextView {
             tempCanvas = new Canvas();
             tempBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
             tempCanvas.setBitmap(tempBitmap);
-            canvasStore.put(key, new Pair<Canvas, Bitmap>(tempCanvas, tempBitmap));
-        }
+            canvasStore.put(key, new Pair<>(tempCanvas, tempBitmap));
+        }   
     }
 
 

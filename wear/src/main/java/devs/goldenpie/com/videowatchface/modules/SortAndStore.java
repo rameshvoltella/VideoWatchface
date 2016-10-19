@@ -19,6 +19,7 @@ import devs.goldenpie.com.videowatchface.event.FileStoredEvent;
 import devs.goldenpie.com.videowatchface.model.BytesPart;
 import devs.goldenpie.com.videowatchface.model.DataModel;
 import devs.goldenpie.com.videowatchface.model.FileModel;
+import devs.goldenpie.com.videowatchface.model.RemoveWatchFaceEvent;
 
 public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
     private static final String TAG = "SortAndStore";
@@ -32,6 +33,10 @@ public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
 
     @Override
     public void onDataSync(DataMap dataMap) {
+        if (dataMap.containsKey(Constants.REMOVE_WATCHFACE)) {
+            EventBus.getDefault().post(new RemoveWatchFaceEvent());
+            return;
+        }
         organizeData(dataMap);
         mTeleportClient.setOnSyncDataItemCallback(this);
     }
@@ -96,8 +101,6 @@ public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
 
     }
 
-
-    //    @DebugLog
     private void makeGif(final DataModel model) {
         new Thread(() -> {
             Log.i(TAG, "Make video file begin");

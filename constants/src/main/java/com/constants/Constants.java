@@ -17,4 +17,5 @@ public class Constants {
     public static final int FRAME_RATE_DELAY = 80;
 
     public static final String DEFAULT_FONT = "main_font.ttf";
+    public static final String REMOVE_WATCHFACE = "remove_watchface";
 }

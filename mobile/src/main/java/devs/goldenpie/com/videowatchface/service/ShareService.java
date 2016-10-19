@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import devs.goldenpie.com.videowatchface.R;
 import devs.goldenpie.com.videowatchface.model.WatchFaceSenderEvent;
+import lombok.Setter;
 
 /**
  * Created by EvilDev on 17.10.2016.
@@ -29,6 +30,9 @@ public class ShareService {
 
     private static TeleportClient mTeleportClient;
     private static ProgressDialog mProgressDialog;
+
+    @Setter
+    private static OnCompleteListener listener;
 
     @SuppressLint("StaticFieldLeak")
     private static Context context;
@@ -81,8 +85,12 @@ public class ShareService {
 
         new Handler().postDelayed(() -> {
             mProgressDialog.dismiss();
+
+            if (listener != null)
+                listener.onComplete();
+
             EventBus.getDefault().post(new WatchFaceSenderEvent(path));
-        }, (dataMaps.size() - 1) * 1000);
+        }, (long) ((dataMaps.size() - 1) * 1000 * 0.8));
 
         final int[] i = {0};
 
@@ -108,5 +116,14 @@ public class ShareService {
         d.putLong(TIME_STAMP, System.currentTimeMillis());
 
         return d;
+    }
+
+    public ShareService withCompleteListener(OnCompleteListener listener) {
+        setListener(listener);
+        return this;
+    }
+
+    public interface OnCompleteListener {
+        void onComplete();
     }
 }

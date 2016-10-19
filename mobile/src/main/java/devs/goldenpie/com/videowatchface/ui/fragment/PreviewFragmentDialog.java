@@ -78,11 +78,13 @@ public class PreviewFragmentDialog extends SupportBlurDialogFragment {
     protected void onFabClick() {
         if (DetectWear.isConnected())
             try {
-                ShareService.getInstance(teleportClient, getContext()).sendGif(getArguments().getString(VIDEO_PATH));
+                ShareService.getInstance(teleportClient, getContext())
+                        .withCompleteListener(this::dismiss)
+                        .sendGif(getArguments().getString(VIDEO_PATH));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         else
-            Toast.makeText(getContext(), "No connection to Watch", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),  R.string.no_connection_to_watch, Toast.LENGTH_SHORT).show();
     }
 }

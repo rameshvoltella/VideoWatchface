@@ -31,7 +31,7 @@ import devs.goldenpie.com.videowatchface.ui.fragment.PreviewFragmentDialog;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
-public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHolder> {
+public class WatchFaceAdapter extends RecyclerView.Adapter<WatchFaceAdapter.ViewHolder> {
 
     private ContentListener contentListener;
 
@@ -48,7 +48,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         }
     };
 
-    public TaskListAdapter(Context context, TeleportClient mTeleportClient) {
+    public WatchFaceAdapter(Context context, TeleportClient mTeleportClient) {
         this.teleportClient = mTeleportClient;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -100,7 +100,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
             Cache.getContext().getContentResolver().unregisterContentObserver(contentObserver);
     }
 
-    public TaskListAdapter setContentListener(ContentListener contentListener) {
+    public WatchFaceAdapter setContentListener(ContentListener contentListener) {
         this.contentListener = contentListener;
         return this;
     }

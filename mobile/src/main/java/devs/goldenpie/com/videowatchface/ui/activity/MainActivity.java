@@ -10,7 +10,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.constants.Constants;
 import com.github.clans.fab.FloatingActionMenu;
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.github.hiteshsondhi88.libffmpeg.FFmpegExecuteResponseHandler;
@@ -44,7 +45,7 @@ import butterknife.OnClick;
 import devs.goldenpie.com.videowatchface.R;
 import devs.goldenpie.com.videowatchface.model.VideoModel;
 import devs.goldenpie.com.videowatchface.model.WatchFaceSenderEvent;
-import devs.goldenpie.com.videowatchface.ui.adapter.TaskListAdapter;
+import devs.goldenpie.com.videowatchface.ui.adapter.WatchFaceAdapter;
 import devs.goldenpie.com.videowatchface.utils.ApplicationPreference;
 import devs.goldenpie.com.videowatchface.utils.DetectWear;
 import life.knowledge4.videotrimmer.utils.FileUtils;
@@ -54,7 +55,7 @@ import pl.droidsonroids.gif.GifImageView;
 /**
  * Created by EvilDev on 14.10.2016.
  */
-public class MainActivity extends BaseActivity implements TaskListAdapter.ContentListener, DetectWear.NodesListener {
+public class MainActivity extends BaseActivity implements WatchFaceAdapter.ContentListener, DetectWear.NodesListener {
     private static final int REQUEST_VIDEO_TRIMMER = 0x01;
     private static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101;
     static final String EXTRA_VIDEO_PATH = "EXTRA_VIDEO_PATH";
@@ -72,7 +73,7 @@ public class MainActivity extends BaseActivity implements TaskListAdapter.Conten
     @BindView(R.id.remove_button)
     protected View removeButton;
 
-    private TaskListAdapter adapter;
+    private WatchFaceAdapter adapter;
 
     private boolean pickVideo = false;
     private ProgressDialog mProgressDialog;
@@ -119,7 +120,7 @@ public class MainActivity extends BaseActivity implements TaskListAdapter.Conten
     }
 
     private void setupList() {
-        adapter = new TaskListAdapter(this, mTeleportClient);
+        adapter = new WatchFaceAdapter(this, mTeleportClient);
         adapter.setContentListener(this);
         adapter.updateSelf();
 
@@ -130,17 +131,28 @@ public class MainActivity extends BaseActivity implements TaskListAdapter.Conten
 
     @OnClick(R.id.remove_button)
     protected void onRemoveClick() {
-        applicationPreference.setCurrentGif("");
+        if (DetectWear.isConnected()) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Remove current watchface video?")
+                    .setMessage("Your current watchface video will be set to default")
+                    .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
+                        mTeleportClient.syncString(Constants.REMOVE_WATCHFACE, null);
+                        applicationPreference.setCurrentGif("");
 
-        try {
-            selectedGif.setImageDrawable(new GifDrawable(getResources(), R.drawable.base_anim));
-        } catch (IOException e) {
-            e.printStackTrace();
+                        try {
+                            selectedGif.setImageDrawable(new GifDrawable(getResources(), R.drawable.base_anim));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        removeButton.setVisibility(View.GONE);
+                    })
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .create()
+                    .show();
+        } else {
+            Toast.makeText(this, R.string.no_connection_to_watch, Toast.LENGTH_SHORT).show();
         }
-
-        removeButton.setVisibility(View.GONE);
-
-        //TODO: Send message to watch
     }
 
     @OnClick(R.id.record)
