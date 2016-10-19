@@ -1,4 +1,4 @@
-package devs.goldenpie.com.videowatchface.model;
+package devs.goldenpie.com.videowatchface.model.db;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;

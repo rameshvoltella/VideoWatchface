@@ -1,6 +1,6 @@
 package devs.goldenpie.com.videowatchface.event;
 
-import devs.goldenpie.com.videowatchface.model.FileModel;
+import devs.goldenpie.com.videowatchface.model.db.FileModel;
 import lombok.Getter;
 
 public class FileStoredEvent {

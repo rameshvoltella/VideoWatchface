@@ -1,4 +1,4 @@
-package devs.goldenpie.com.videowatchface.model;
+package devs.goldenpie.com.videowatchface.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

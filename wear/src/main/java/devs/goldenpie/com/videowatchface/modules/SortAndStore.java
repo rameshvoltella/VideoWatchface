@@ -18,8 +18,8 @@ import java.util.List;
 import devs.goldenpie.com.videowatchface.event.FileStoredEvent;
 import devs.goldenpie.com.videowatchface.model.BytesPart;
 import devs.goldenpie.com.videowatchface.model.DataModel;
-import devs.goldenpie.com.videowatchface.model.FileModel;
-import devs.goldenpie.com.videowatchface.model.RemoveWatchFaceEvent;
+import devs.goldenpie.com.videowatchface.model.db.FileModel;
+import devs.goldenpie.com.videowatchface.event.RemoveWatchFaceEvent;
 
 public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
     private static final String TAG = "SortAndStore";

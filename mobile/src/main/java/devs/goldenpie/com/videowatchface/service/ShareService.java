@@ -17,7 +17,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 import devs.goldenpie.com.videowatchface.R;
-import devs.goldenpie.com.videowatchface.model.WatchFaceSenderEvent;
+import devs.goldenpie.com.videowatchface.event.WatchFaceSenderEvent;
 import lombok.Setter;
 
 /**

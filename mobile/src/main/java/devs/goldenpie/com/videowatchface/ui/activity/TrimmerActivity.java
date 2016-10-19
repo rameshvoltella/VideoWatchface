@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,26 +20,35 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import devs.goldenpie.com.videowatchface.R;
 import devs.goldenpie.com.videowatchface.model.VideoModel;
+import devs.goldenpie.com.videowatchface.ui.BaseActivity;
 import life.knowledge4.videotrimmer.K4LVideoTrimmer;
 import life.knowledge4.videotrimmer.interfaces.OnK4LVideoListener;
 import life.knowledge4.videotrimmer.interfaces.OnTrimVideoListener;
 
-public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoListener, OnK4LVideoListener {
+public class TrimmerActivity extends BaseActivity implements OnTrimVideoListener, OnK4LVideoListener {
 
     public static final String VIDEO_WATCH_FACE = ".VideoWatchFace";
     public static final String DESTINATION_PATH = Environment.getExternalStorageDirectory() + File.separator + VIDEO_WATCH_FACE + File.separator;
 
-    private K4LVideoTrimmer mVideoTrimmer;
+    @BindView(R.id.timeLine)
+    protected K4LVideoTrimmer mVideoTrimmer;
+
     private ProgressDialog mProgressDialog;
 
     private FFmpeg fFmpeg;
 
     @Override
+    protected int getContentView() {
+        return R.layout.activity_trimmer;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_trimmer);
 
         fFmpeg = FFmpeg.getInstance(this);
 
@@ -83,7 +91,6 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
         mProgressDialog.setTitle(getString(R.string.choose_watch_video));
         mProgressDialog.setMessage(getString(R.string.video_trimming_progress));
 
-        mVideoTrimmer = ((K4LVideoTrimmer) findViewById(R.id.timeLine));
         if (mVideoTrimmer != null) {
             mVideoTrimmer.setMaxDuration(10);
             mVideoTrimmer.setOnTrimVideoListener(this);
@@ -164,6 +171,10 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
                 for (String string : strings) {
                     Log.e("FFmpeg", string);
                 }
+
+                if (mProgressDialog.isShowing())
+                    mProgressDialog.dismiss();
+                Toast.makeText(TrimmerActivity.this, R.string.we_can_not_convert_this, Toast.LENGTH_SHORT).show();
             }
 
             @Override

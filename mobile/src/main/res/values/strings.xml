@@ -20,4 +20,5 @@
     <string name="no_watchface_history_n_nadd_first_video_nto_set_it_as_watchface">No WatchFace history\n\nAdd first video\nto set it as WatchFace</string>
     <string name="uploading_watchface">Uploading your Watch Face</string>
     <string name="no_connection_to_watch">No connection to Watch</string>
+    <string name="we_can_not_convert_this">We can not convert this(</string>
 </resources>

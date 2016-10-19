@@ -40,11 +40,11 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import devs.goldenpie.com.videowatchface.R;
+import devs.goldenpie.com.videowatchface.event.WatchFaceSenderEvent;
 import devs.goldenpie.com.videowatchface.model.VideoModel;
-import devs.goldenpie.com.videowatchface.model.WatchFaceSenderEvent;
+import devs.goldenpie.com.videowatchface.ui.BaseActivity;
 import devs.goldenpie.com.videowatchface.ui.adapter.WatchFaceAdapter;
 import devs.goldenpie.com.videowatchface.utils.ApplicationPreference;
 import devs.goldenpie.com.videowatchface.utils.DetectWear;
@@ -82,10 +82,14 @@ public class MainActivity extends BaseActivity implements WatchFaceAdapter.Conte
     private ApplicationPreference applicationPreference;
 
     @Override
+    protected int getContentView() {
+        return R.layout.activity_main;
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+
         EventBus.getDefault().register(this);
         mTeleportClient = new TeleportClient(this);
         DetectWear.init(this);
@@ -136,7 +140,7 @@ public class MainActivity extends BaseActivity implements WatchFaceAdapter.Conte
                     .setTitle("Remove current watchface video?")
                     .setMessage("Your current watchface video will be set to default")
                     .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
-                        mTeleportClient.syncString(Constants.REMOVE_WATCHFACE, null);
+                        mTeleportClient.syncString(Constants.REMOVE_WATCHFACE, String.valueOf(System.currentTimeMillis()));
                         applicationPreference.setCurrentGif("");
 
                         try {
@@ -268,6 +272,7 @@ public class MainActivity extends BaseActivity implements WatchFaceAdapter.Conte
             });
         } catch (FFmpegNotSupportedException e) {
             e.printStackTrace();
+            return;
         }
 
         if (mProgressDialog == null) {
@@ -325,6 +330,10 @@ public class MainActivity extends BaseActivity implements WatchFaceAdapter.Conte
                 for (String string : strings) {
                     Log.e("FFmpeg", string);
                 }
+
+                if (mProgressDialog.isShowing())
+                    mProgressDialog.dismiss();
+                Toast.makeText(MainActivity.this, R.string.we_can_not_convert_this, Toast.LENGTH_SHORT).show();
             }
 
             @Override
