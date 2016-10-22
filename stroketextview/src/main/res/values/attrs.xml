@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="StrokeTextView">
+        <attr name="str_innerShadowColor" format="color" />
+        <attr name="str_innerShadowRadius" format="dimension" />
+        <attr name="str_innerShadowDx" format="dimension" />
+        <attr name="str_innerShadowDy" format="dimension" />
+
+        <attr name="str_outerShadowColor" format="color" />
+        <attr name="str_outerShadowRadius" format="dimension" />
+        <attr name="str_outerShadowDx" format="dimension" />
+        <attr name="str_outerShadowDy" format="dimension" />
+
+        <attr name="str_typeface" format="string" />
+
+        <attr name="str_foreground" format="reference|color" />
+        <attr name="str_background" format="reference|color" />
+
+        <attr name="str_strokeWidth" format="dimension" />
+        <attr name="str_strokeMiter" format="dimension" />
+        <attr name="str_strokeColor" format="color" />
+        <attr name="str_strokeJoinStyle">
+            <enum name="miter" value="0" />
+            <enum name="bevel" value="1" />
+            <enum name="round" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>

@@ -1,4 +1,6 @@
 <resources>
+    <string name="banner_ad_unit_id">ca-app-pub-1074153481364318/1004809783</string>
+
     <string name="app_name">Video Watch Face</string>
     <string name="watch_status">Watch is %s</string>
     <string name="connected">connected</string>
@@ -17,8 +19,15 @@
     <string name="choose_exist_gif">Choose exist GIF</string>
     <string name="choose_exist_video">Choose exist video</string>
     <string name="record_video">Record video</string>
-    <string name="no_watchface_history_n_nadd_first_video_nto_set_it_as_watchface">No WatchFace history\n\nAdd first video\nto set it as WatchFace</string>
+    <string name="no_watchface_history_n_nadd_first_video_nto_set_it_as_watchface">No Watch Face history</string>
     <string name="uploading_watchface">Uploading your Watch Face</string>
     <string name="no_connection_to_watch">No connection to Watch</string>
     <string name="we_can_not_convert_this">We can not convert this(</string>
+    <string name="remove_dialog_title">Remove current Watch Face video?</string>
+    <string name="remove_dialog_message">Your current Watch Face video will be set to default</string>
+    <string name="remove_from_db_dalog_title">Remove this video?</string>
+    <string name="remove_from_db_dalog_message">Created video will be removed from the device and you will not can recover it</string>
+    <string name="share_link">Share app link</string>
+    <string name="sahre_content">Set any gif or video as Watch Face with %1$s /n %2$s</string>
+    <string name="add_first_video_or_gif">Add first video or gif</string>
 </resources>

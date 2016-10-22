@@ -21,7 +21,7 @@ android {
         }
     }
     defaultConfig {
-        applicationId "devs.goldenpie.com.videowatchface"
+        applicationId "com.goldenpie.devs.videowatchface"
         minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_WEAR_SDK_VERSION)
         targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
         versionCode 1
@@ -45,6 +45,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':teleportlib')
     compile project(':constants')
+    compile project(':stroketextview')
+
     compile 'com.google.android.support:wearable:2.0.0-alpha2'
     compile 'com.google.android.gms:play-services-wearable:9.6.1'
     compile 'com.jakewharton:butterknife:8.4.0'

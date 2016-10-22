@@ -1,1 +1,1 @@
-include ':mobile', ':wear', ':teleportlib', ':ffmpeg', ':constants'
+include ':mobile', ':wear', ':teleportlib', ':ffmpeg', ':constants', ':stroketextview'
