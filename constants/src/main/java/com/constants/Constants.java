@@ -11,7 +11,7 @@ public class Constants {
 
     public static final int DEFAULT_VIDEO_PART_SIZE = 99000;
 
-    public static final int FRAME_RATE_DELAY = 120;
+    public static final int FRAME_RATE_DELAY = 100;
 
     public static final String DEFAULT_FONT = "main_font.ttf";
     public static final String REMOVE_WATCHFACE = "remove_watchface";

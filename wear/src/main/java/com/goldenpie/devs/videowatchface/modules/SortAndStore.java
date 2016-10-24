@@ -1,5 +1,6 @@
 package com.goldenpie.devs.videowatchface.modules;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.constants.Constants;
@@ -57,17 +58,15 @@ public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
         bp.setPosition(partNum);
         bp.setBytes(partOfData);
 
-        if (!dataModelsList.isEmpty()) {
-            for (int i = 0; i < dataModelsList.size(); i++) {
-                if (dataModelsList.get(i).getDescription().equals(description)) {
-                    if (author != null)
-                        dataModelsList.get(i).setAuthor(author);
-                    dataModelsList.get(i).getListOfBytes().add(bp);
-                    containsVideo = true;
-                    break;
-                } else {
-                    containsVideo = false;
-                }
+        for (int i = 0; i < dataModelsList.size(); i++) {
+            if (dataModelsList.get(i).getDescription().equals(description)) {
+                if (author != null)
+                    dataModelsList.get(i).setAuthor(author);
+                dataModelsList.get(i).getListOfBytes().add(bp);
+                containsVideo = true;
+                break;
+            } else {
+                containsVideo = false;
             }
         }
 
@@ -101,7 +100,7 @@ public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
     }
 
     private void makeGif(final DataModel model) {
-        new Thread(() -> {
+        AsyncTask.execute(() -> {
             Log.i(TAG, "Make video file begin");
 
             ArrayList<BytesPart> bytesPartArrayList = model.getListOfBytes();
@@ -125,8 +124,7 @@ public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
-
+        });
     }
 
     //    @DebugLog

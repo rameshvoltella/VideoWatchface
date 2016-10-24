@@ -243,6 +243,9 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
             specW = View.MeasureSpec.makeMeasureSpec(displaySize.x, View.MeasureSpec.EXACTLY);
             specH = View.MeasureSpec.makeMeasureSpec(displaySize.y, View.MeasureSpec.EXACTLY);
+
+            myLayout.measure(specW, specH);
+            myLayout.layout(0, 0, myLayout.getMeasuredWidth(), myLayout.getMeasuredHeight());
         }
 
         @Override
@@ -275,9 +278,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
             textClock.setText(sdf.format(calendar.getTime()));
             bigTextClock.setText(sdf.format(calendar.getTime()));
-
-            myLayout.measure(specW, specH);
-            myLayout.layout(0, 0, myLayout.getMeasuredWidth(), myLayout.getMeasuredHeight());
 
             canvas.drawColor(Color.BLACK);
             canvas.translate(mXOffset, mYOffset);
