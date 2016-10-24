@@ -79,6 +79,7 @@ public class PreviewFragmentDialog extends SupportBlurDialogFragment {
 
     private void requestAd() {
         AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("E802AD13223AAE827215D7FF29BB0BDA")
                 .build();
 
         mInterstitialAd.loadAd(adRequest);

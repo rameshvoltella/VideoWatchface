@@ -14,7 +14,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
-import android.text.format.Time;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -38,10 +38,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Locale;
-import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,7 +57,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
     public class Engine extends CanvasWatchFaceService.Engine {
 
         static final int MSG_UPDATE_TIME = 0;
-        static final String CLOCK_FORMAT = "%02d:%02d";
+        private SimpleDateFormat sdf;
 
         final Handler mUpdateTimeHandler = new Handler() {
             @Override
@@ -90,18 +89,25 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
         private int specW, specH;
 
-        @SuppressWarnings("deprecation")
-        private Time mTime;
-
         final BroadcastReceiver mTimeZoneReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                mTime.clear(intent.getStringExtra("time-zone"));
-                mTime.setToNow();
+                invalidate();
             }
         };
 
-        private Timer updateTimer = null;
+        private Handler mHandler;
+
+        Runnable mStatusChecker = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    invalidate();
+                } finally {
+                    mHandler.postDelayed(mStatusChecker, Constants.FRAME_RATE_DELAY);
+                }
+            }
+        };
 
         private GifDrawable gifDrawable;
 
@@ -109,7 +115,10 @@ public class WatchFaceService extends CanvasWatchFaceService {
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
 
+            sdf = new SimpleDateFormat(DateFormat.is24HourFormat(getApplicationContext()) ? "H:mm" : "h:mm a", Locale.getDefault());
+
             EventBus.getDefault().register(this);
+
             mTeleportClient = new TeleportClient(getApplicationContext());
             mTeleportClient.getGoogleApiClient().registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                 @Override
@@ -131,8 +140,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
                     .setShowSystemUiTime(false)
                     .build());
 
-            mTime = new Time();
-
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             myLayout = inflater.inflate(R.layout.watchface, null);
             ButterKnife.bind(this, myLayout);
@@ -151,7 +158,17 @@ public class WatchFaceService extends CanvasWatchFaceService {
                     e.printStackTrace();
                 }
             playData();
-            initTimer();
+
+            mHandler = new Handler();
+            startRepeatingTask();
+        }
+
+        private void startRepeatingTask() {
+            mStatusChecker.run();
+        }
+
+        private void stopRepeatingTask() {
+            mHandler.removeCallbacks(mStatusChecker);
         }
 
         @Subscribe(threadMode = ThreadMode.MAIN)
@@ -187,21 +204,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
         private void playData() {
             if (gifDrawable != null)
                 gifView.setImageDrawable(gifDrawable);
-        }
-
-        private void initTimer() {
-            updateTimer = new Timer();
-            updateTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    invalidate();
-                }
-            }, 0, Constants.FRAME_RATE_DELAY);
-        }
-
-        private void cancelTimer() {
-            if (updateTimer != null)
-                updateTimer.cancel();
         }
 
         @Override
@@ -247,10 +249,10 @@ public class WatchFaceService extends CanvasWatchFaceService {
         public void onAmbientModeChanged(boolean inAmbientMode) {
             super.onAmbientModeChanged(inAmbientMode);
             if (!inAmbientMode) {
-                initTimer();
+                startRepeatingTask();
                 ((GifDrawable) gifView.getDrawable()).start();
             } else {
-                cancelTimer();
+                stopRepeatingTask();
                 ((GifDrawable) gifView.getDrawable()).pause();
             }
             updateTimer();
@@ -259,7 +261,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onDraw(Canvas canvas, Rect bounds) {
-            mTime.setToNow();
+            Calendar calendar = Calendar.getInstance();
 
             if (!isInAmbientMode()) {
                 gifView.setVisibility(View.VISIBLE);
@@ -271,8 +273,8 @@ public class WatchFaceService extends CanvasWatchFaceService {
                 gifView.setVisibility(View.INVISIBLE);
             }
 
-            textClock.setText(String.format(Locale.getDefault(), CLOCK_FORMAT, mTime.hour, mTime.minute));
-            bigTextClock.setText(String.format(Locale.getDefault(), CLOCK_FORMAT, mTime.hour, mTime.minute));
+            textClock.setText(sdf.format(calendar.getTime()));
+            bigTextClock.setText(sdf.format(calendar.getTime()));
 
             myLayout.measure(specW, specH);
             myLayout.layout(0, 0, myLayout.getMeasuredWidth(), myLayout.getMeasuredHeight());
@@ -288,13 +290,13 @@ public class WatchFaceService extends CanvasWatchFaceService {
             super.onVisibilityChanged(visible);
 
             if (visible) {
-                initTimer();
+                startRepeatingTask();
                 registerReceiver();
-                mTime.clear(TimeZone.getDefault().getID());
-                mTime.setToNow();
+                ((GifDrawable) gifView.getDrawable()).start();
             } else {
-                cancelTimer();
+                stopRepeatingTask();
                 unregisterReceiver();
+                ((GifDrawable) gifView.getDrawable()).pause();
             }
             updateTimer();
 

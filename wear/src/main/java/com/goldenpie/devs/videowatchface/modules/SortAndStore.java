@@ -3,6 +3,11 @@ package com.goldenpie.devs.videowatchface.modules;
 import android.util.Log;
 
 import com.constants.Constants;
+import com.goldenpie.devs.videowatchface.event.FileStoredEvent;
+import com.goldenpie.devs.videowatchface.event.RemoveWatchFaceEvent;
+import com.goldenpie.devs.videowatchface.model.BytesPart;
+import com.goldenpie.devs.videowatchface.model.DataModel;
+import com.goldenpie.devs.videowatchface.model.db.FileModel;
 import com.google.android.gms.wearable.DataMap;
 import com.mariux.teleport.lib.TeleportClient;
 
@@ -14,12 +19,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-
-import com.goldenpie.devs.videowatchface.event.FileStoredEvent;
-import com.goldenpie.devs.videowatchface.model.BytesPart;
-import com.goldenpie.devs.videowatchface.model.DataModel;
-import com.goldenpie.devs.videowatchface.model.db.FileModel;
-import com.goldenpie.devs.videowatchface.event.RemoveWatchFaceEvent;
 
 public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
     private static final String TAG = "SortAndStore";

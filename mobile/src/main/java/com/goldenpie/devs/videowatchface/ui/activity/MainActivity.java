@@ -19,6 +19,7 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -99,7 +100,7 @@ public class MainActivity extends BaseActivity implements WatchFaceAdapter.Conte
     private ApplicationPreference applicationPreference;
 
     private BroadcastReceiver timeBroadcastReceiver;
-    private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+    private SimpleDateFormat timeFormat;
 
     @Override
     protected int getContentView() {
@@ -116,6 +117,7 @@ public class MainActivity extends BaseActivity implements WatchFaceAdapter.Conte
         applicationPreference = new ApplicationPreference(this);
         DetectWear.setNodesListener(this);
 
+        timeFormat = new SimpleDateFormat(DateFormat.is24HourFormat(getApplicationContext()) ? "H:mm" : "h:mm a", Locale.getDefault());
         status.setText(getString(R.string.watch_status, getString(R.string.not_connected)));
 
         clock.setTypeface(Typeface.createFromAsset(getAssets(), Constants.DEFAULT_FONT));
