@@ -25,8 +25,8 @@ android {
         applicationId "com.goldenpie.devs.videowatchface"
         minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
         targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
-        versionCode 1
-        versionName "1.0"
+        versionCode Integer.parseInt(project.VERSION_CODE)
+        versionName project.VERSION_NAME
 
         renderscriptTargetApi 22
         renderscriptSupportModeEnabled true
