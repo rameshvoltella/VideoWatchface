@@ -16,6 +16,7 @@ import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -133,13 +134,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
             mTeleportClient.setOnSyncDataItemCallback(new SortAndStore(mTeleportClient));
             mTeleportClient.connect();
 
-            setWatchFaceStyle(new WatchFaceStyle.Builder(WatchFaceService.this)
-                    .setCardPeekMode(WatchFaceStyle.PEEK_MODE_SHORT)
-                    .setStatusBarGravity(Gravity.END)
-                    .setHotwordIndicatorGravity(Gravity.BOTTOM)
-                    .setShowSystemUiTime(false)
-                    .build());
-
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             myLayout = inflater.inflate(R.layout.watchface, null);
             ButterKnife.bind(this, myLayout);
@@ -233,13 +227,17 @@ public class WatchFaceService extends CanvasWatchFaceService {
         public void onApplyWindowInsets(WindowInsets insets) {
             super.onApplyWindowInsets(insets);
 
-            if (insets.isRound()) {
-                mYOffset = mXOffset = displaySize.x * 0.1f;
-                displaySize.y -= 2 * mXOffset;
-                displaySize.x -= 2 * mXOffset;
-            } else {
-                mXOffset = mYOffset = 0;
-            }
+            setWatchFaceStyle(new WatchFaceStyle.Builder(WatchFaceService.this)
+                    .setCardPeekMode(WatchFaceStyle.PEEK_MODE_SHORT)
+                    .setStatusBarGravity(insets.isRound() ? Gravity.START : Gravity.BOTTOM | Gravity.CENTER)
+                    .setHotwordIndicatorGravity(insets.isRound() ? Gravity.CENTER : Gravity.CENTER)
+                    .setShowSystemUiTime(false)
+                    .build());
+
+            mXOffset = mYOffset = 0;
+
+            if (insets.isRound())
+                textClock.setPadding(0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()), 0, 0);
 
             specW = View.MeasureSpec.makeMeasureSpec(displaySize.x, View.MeasureSpec.EXACTLY);
             specH = View.MeasureSpec.makeMeasureSpec(displaySize.y, View.MeasureSpec.EXACTLY);
