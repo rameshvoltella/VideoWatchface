@@ -75,9 +75,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
         boolean mRegisteredTimeZoneReceiver = false;
 
-        float mXOffset = 0;
-        float mYOffset = 0;
-
         @BindView(R.id.gifView)
         GifImageView gifView;
         @BindView(R.id.clock)
@@ -93,6 +90,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
         final BroadcastReceiver mTimeZoneReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                sdf = new SimpleDateFormat(DateFormat.is24HourFormat(getApplicationContext()) ? "H:mm" : "h:mm a", Locale.getDefault());
                 invalidate();
             }
         };
@@ -220,6 +218,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onTimeTick() {
             super.onTimeTick();
+            sdf = new SimpleDateFormat(DateFormat.is24HourFormat(getApplicationContext()) ? "H:mm" : "h:mm a", Locale.getDefault());
             invalidate();
         }
 
@@ -233,8 +232,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
                     .setHotwordIndicatorGravity(insets.isRound() ? Gravity.CENTER : Gravity.CENTER)
                     .setShowSystemUiTime(false)
                     .build());
-
-            mXOffset = mYOffset = 0;
 
             if (insets.isRound())
                 textClock.setPadding(0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()), 0, 0);
@@ -278,7 +275,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
             bigTextClock.setText(sdf.format(calendar.getTime()));
 
             canvas.drawColor(Color.BLACK);
-            canvas.translate(mXOffset, mYOffset);
+            canvas.translate(0, 0);
             myLayout.draw(canvas);
         }
 
