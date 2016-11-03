@@ -27,12 +27,10 @@ import android.view.WindowManager;
 
 import com.constants.Constants;
 import com.goldenpie.devs.videowatchface.event.FileStoredEvent;
-import com.goldenpie.devs.videowatchface.event.RemoveWatchFaceEvent;
 import com.goldenpie.devs.videowatchface.model.db.FileModel;
 import com.goldenpie.devs.videowatchface.modules.SortAndStore;
 import com.goldenpie.stroketextview.StrokeTextView;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.mariux.teleport.lib.TeleportClient;
+import com.google.android.gms.wearable.DataMap;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -85,7 +83,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
         @BindView(R.id.largeClock)
         StrokeTextView bigTextClock;
 
-        private TeleportClient mTeleportClient;
         private View myLayout;
 
         private int specW, specH;
@@ -111,6 +108,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
         };
 
         private GifDrawable gifDrawable;
+        private SortAndStore sortAndStore;
 
         @Override
         public void onCreate(SurfaceHolder holder) {
@@ -119,20 +117,6 @@ public class WatchFaceService extends CanvasWatchFaceService {
             sdf = new SimpleDateFormat(DateFormat.is24HourFormat(getApplicationContext()) ? "H:mm" : "h:mm a", Locale.getDefault());
 
             EventBus.getDefault().register(this);
-
-            mTeleportClient = new TeleportClient(getApplicationContext());
-            mTeleportClient.getGoogleApiClient().registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                @Override
-                public void onConnected(Bundle bundle) {
-                    mTeleportClient.sendMessage(Constants.SERVICE_CONNECTED, null);
-                }
-
-                @Override
-                public void onConnectionSuspended(int i) {
-                }
-            });
-            mTeleportClient.setOnSyncDataItemCallback(new SortAndStore(mTeleportClient));
-            mTeleportClient.connect();
 
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             myLayout = inflater.inflate(R.layout.watchface, null);
@@ -166,9 +150,22 @@ public class WatchFaceService extends CanvasWatchFaceService {
         }
 
         @Subscribe(threadMode = ThreadMode.MAIN)
-        public void onEven(FileStoredEvent event) {
-            mTeleportClient.setOnSyncDataItemCallback(new SortAndStore(mTeleportClient));
+        public void onEvent(DataMap dataMap) {
+            if (sortAndStore == null)
+                sortAndStore = new SortAndStore();
 
+            sortAndStore.organizeData(dataMap);
+        }
+
+        @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onEvent(final String path) {
+            if (path.equals(Constants.REMOVE_WATCHFACE)) {
+                removeWatchFace();
+            }
+        }
+
+        @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onEven(FileStoredEvent event) {
             try {
                 gifDrawable = new GifDrawable(event.getFileModel().getData());
             } catch (IOException e) {
@@ -178,11 +175,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
             playData();
         }
 
-        @SuppressWarnings("UnusedParameters")
-        @Subscribe(threadMode = ThreadMode.MAIN)
-        public void onEven(RemoveWatchFaceEvent event) {
-            mTeleportClient.setOnSyncDataItemCallback(new SortAndStore(mTeleportClient));
-
+        private void removeWatchFace() {
             if (FileModel.isExist())
                 FileModel.getFileModel().delete();
 
@@ -202,14 +195,8 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onDestroy() {
-            sendDisconnectRequest();
             EventBus.getDefault().unregister(this);
-            mTeleportClient.disconnect();
             super.onDestroy();
-        }
-
-        private void sendDisconnectRequest() {
-            mTeleportClient.sendMessage(Constants.DISCONNECT_REQUEST, null);
         }
 
         @Override
