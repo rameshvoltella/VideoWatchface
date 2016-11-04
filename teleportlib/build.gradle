@@ -34,7 +34,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.google.android.gms:play-services-wearable:9.6.1'
+    compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'com.google.android.gms:play-services-wearable:+'
 }
 
 //apply from: 'bintray_publish.gradle'

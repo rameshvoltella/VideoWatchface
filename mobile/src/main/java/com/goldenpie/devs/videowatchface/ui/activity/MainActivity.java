@@ -185,7 +185,7 @@ public class MainActivity extends BaseActivity implements WatchFaceAdapter.Conte
                     .setTitle(R.string.remove_dialog_title)
                     .setMessage(R.string.remove_dialog_message)
                     .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
-                        mTeleportClient.syncString(Constants.REMOVE_WATCHFACE, String.valueOf(System.currentTimeMillis()));
+                        mTeleportClient.sendMessage(Constants.REMOVE_WATCHFACE, null);
                         applicationPreference.setCurrentGif("");
 
                         try {

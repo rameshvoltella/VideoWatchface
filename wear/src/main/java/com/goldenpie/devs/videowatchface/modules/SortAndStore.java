@@ -5,12 +5,10 @@ import android.util.Log;
 
 import com.constants.Constants;
 import com.goldenpie.devs.videowatchface.event.FileStoredEvent;
-import com.goldenpie.devs.videowatchface.event.RemoveWatchFaceEvent;
 import com.goldenpie.devs.videowatchface.model.BytesPart;
 import com.goldenpie.devs.videowatchface.model.DataModel;
 import com.goldenpie.devs.videowatchface.model.db.FileModel;
 import com.google.android.gms.wearable.DataMap;
-import com.mariux.teleport.lib.TeleportClient;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -21,27 +19,12 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
+public class SortAndStore{
     private static final String TAG = "SortAndStore";
-    private TeleportClient mTeleportClient;
     private int iteration = 0;
     private List<DataModel> dataModelsList = new ArrayList<>();
 
-    public SortAndStore(TeleportClient teleportClient) {
-        mTeleportClient = teleportClient;
-    }
-
-    @Override
-    public void onDataSync(DataMap dataMap) {
-        if (dataMap.containsKey(Constants.REMOVE_WATCHFACE)) {
-            EventBus.getDefault().post(new RemoveWatchFaceEvent());
-            return;
-        }
-        organizeData(dataMap);
-        mTeleportClient.setOnSyncDataItemCallback(this);
-    }
-
-    private void organizeData(DataMap dataMap) {
+    public void organizeData(DataMap dataMap) {
         Log.i(TAG, String.valueOf(Calendar.getInstance().getTimeInMillis()));
         Log.i(TAG, "Organize video file begin");
 
@@ -104,6 +87,7 @@ public class SortAndStore extends TeleportClient.OnSyncDataItemCallback {
             Log.i(TAG, "Make video file begin");
 
             ArrayList<BytesPart> bytesPartArrayList = model.getListOfBytes();
+            dataModelsList.clear();
             byte[] bytes = new byte[0];
 
             sortBytes(bytesPartArrayList);

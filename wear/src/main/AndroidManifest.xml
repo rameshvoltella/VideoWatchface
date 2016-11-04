@@ -33,6 +33,13 @@
             </intent-filter>
         </service>
 
+        <service
+            android:name=".WearService" >
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
+            </intent-filter>
+        </service>
+
         <meta-data
             android:name="AA_DB_NAME"
             android:value="WearData.db" />
