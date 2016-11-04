@@ -2,8 +2,10 @@ package com.goldenpie.devs.videowatchface.ui.fragment;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.os.AsyncTaskCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,8 +76,6 @@ public class PreviewFragmentDialog extends SupportBlurDialogFragment {
                 sendGif();
             }
         });
-
-        requestAd();
     }
 
     private void requestAd() {
@@ -132,6 +132,8 @@ public class PreviewFragmentDialog extends SupportBlurDialogFragment {
             Answers.getInstance().logContentView(new ContentViewEvent()
                     .putContentName("PREVIEW_DIALOG"));
         }
+
+        requestAd();
     }
 
     @OnClick(R.id.fab)

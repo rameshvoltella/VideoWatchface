@@ -100,15 +100,17 @@ public class ShareService {
                     mProgressDialog.incrementProgressBy((int) progress[0]);
                     progress[0] = 0;
                 }
+
+                if (mProgressDialog.getProgress() == 100)
+                    mProgressDialog.dismiss();
             }
-        }, 0, 80);
+        }, 0, 70);
 
 
         new Handler().postDelayed(() -> {
 
             T.cancel();
 
-            mProgressDialog.dismiss();
 
             if (listener != null)
                 try {
