@@ -1,11 +1,11 @@
 package com.goldenpie.devs.videowatchface.ui.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.os.AsyncTaskCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -134,6 +134,16 @@ public class PreviewFragmentDialog extends SupportBlurDialogFragment {
         }
 
         requestAd();
+    }
+
+    @OnClick(R.id.fab_share)
+    protected void onFabShareClick() {
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        Uri screenshotUri = Uri.parse("file://" + getArguments().getString(VIDEO_PATH));
+
+        sharingIntent.setType("image/gif");
+        sharingIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
+        startActivity(Intent.createChooser(sharingIntent, "Share gif using"));
     }
 
     @OnClick(R.id.fab)

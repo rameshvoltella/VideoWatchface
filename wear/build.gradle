@@ -6,6 +6,11 @@ android {
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
+    lintOptions{
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
     signingConfigs {
         release {
             storeFile file('misc/release.keystore')
