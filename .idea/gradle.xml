@@ -10,6 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/constants" />
             <option value="$PROJECT_DIR$/ffmpeg" />
+            <option value="$PROJECT_DIR$/k4l-video-trimmer" />
             <option value="$PROJECT_DIR$/mobile" />
             <option value="$PROJECT_DIR$/stroketextview" />
             <option value="$PROJECT_DIR$/teleportlib" />

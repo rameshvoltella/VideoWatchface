@@ -6,6 +6,8 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.constants.Constants;
+import com.goldenpie.devs.videowatchface.R;
+import com.goldenpie.devs.videowatchface.event.WatchFaceSenderEvent;
 import com.google.android.gms.wearable.DataMap;
 import com.mariux.teleport.lib.TeleportClient;
 
@@ -18,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.goldenpie.devs.videowatchface.R;
-import com.goldenpie.devs.videowatchface.event.WatchFaceSenderEvent;
 import lombok.Setter;
 
 /**
@@ -35,9 +35,6 @@ public class ShareService {
 
     @Setter
     private static OnCompleteListener listener;
-
-    private static Timer mTimer;
-    private static MyTimerTask mMyTimerTask;
 
     @SuppressLint("StaticFieldLeak")
     private static Context context;
@@ -93,14 +90,16 @@ public class ShareService {
 
 
         Timer T = new Timer();
+        final double[] progress = {0};
+
         T.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                int progress = (int) ((0.125 / (double) (dataMaps.size() - 1)) * 100);
-                if (progress > 0)
-                    mProgressDialog.incrementProgressBy(progress);
-                else
-                    mProgressDialog.incrementProgressBy(1);
+                progress[0] += ((0.125 / (double) (dataMaps.size() - 1)) * 100);
+                if (progress[0] >= 1) {
+                    mProgressDialog.incrementProgressBy((int) progress[0]);
+                    progress[0] = 0;
+                }
             }
         }, 0, 80);
 
