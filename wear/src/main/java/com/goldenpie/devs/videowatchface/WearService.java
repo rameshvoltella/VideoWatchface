@@ -8,4 +8,8 @@ import com.mariux.teleport.lib.TeleportService;
  * @since 03.11.16
  */
 public class WearService extends TeleportService {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
 }
