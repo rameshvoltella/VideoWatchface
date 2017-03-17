@@ -141,7 +141,7 @@ public class TrimmerActivity extends BaseActivity implements OnTrimVideoListener
 
         copy.createNewFile();
 
-        String cmd = "-y -v debug -i " + path + " -r 15 -vf scale=w=320:h=320:force_original_aspect_ratio=increase,crop=320:320 -threads 12 -gifflags +transdiff -y " + copy.getPath();
+        String cmd = "-y -v debug -i " + path + " -r 15 -vf scale=w=320:h=320:force_original_aspect_ratio=increase,crop=320:320 -threads 2 -gifflags +transdiff -y " + copy.getPath();
         String[] command = cmd.split(" ");
 
         File finalCopy = copy;

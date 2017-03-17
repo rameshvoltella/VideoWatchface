@@ -32,7 +32,7 @@ class CpuArchHelper {
     }
     
     static String getx86_64CpuAbi() {
-        return "x86_64";
+        return "x86";
     }
     
     static String getArm64CpuAbi() {

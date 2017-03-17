@@ -113,7 +113,6 @@ public class MainActivity extends BaseActivity implements WatchFaceAdapter.Conte
 
         EventBus.getDefault().register(this);
         mTeleportClient = new TeleportClient(this);
-        DetectWear.init(this);
         applicationPreference = new ApplicationPreference(this);
         DetectWear.setNodesListener(this);
 
@@ -362,7 +361,7 @@ public class MainActivity extends BaseActivity implements WatchFaceAdapter.Conte
 
         copy.createNewFile();
 
-        String cmd = "-y -v debug -i " + path + " -r 15 -vf scale=w=320:h=320:force_original_aspect_ratio=increase,crop=320:320 -threads 12 " + copy.getPath();
+        String cmd = "-y -v debug -i " + path + " -r 15 -vf scale=w=320:h=320:force_original_aspect_ratio=increase,crop=320:320 -threads 2 " + copy.getPath();
         String[] command = cmd.split(" ");
 
         File finalCopy = copy;
