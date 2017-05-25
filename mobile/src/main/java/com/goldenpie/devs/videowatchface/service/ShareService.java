@@ -9,10 +9,10 @@ import com.constants.Constants;
 import com.goldenpie.devs.videowatchface.R;
 import com.goldenpie.devs.videowatchface.event.WatchFaceSenderEvent;
 import com.google.android.gms.wearable.DataMap;
+import com.hwangjr.rxbus.RxBus;
 import com.mariux.teleport.lib.TeleportClient;
 
 import org.apache.commons.io.FilenameUtils;
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -119,7 +119,7 @@ public class ShareService {
                     e.printStackTrace();
                 }
 
-            EventBus.getDefault().post(new WatchFaceSenderEvent(path));
+            RxBus.get().post(new WatchFaceSenderEvent(path));
         }, (long) ((dataMaps.size() - 1) * 1000 * 0.8));
 
         final int[] i = {0};

@@ -31,10 +31,9 @@ import com.goldenpie.devs.videowatchface.model.db.FileModel;
 import com.goldenpie.devs.videowatchface.modules.SortAndStore;
 import com.goldenpie.stroketextview.StrokeTextView;
 import com.google.android.gms.wearable.DataMap;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import com.hwangjr.rxbus.RxBus;
+import com.hwangjr.rxbus.annotation.Subscribe;
+import com.hwangjr.rxbus.thread.EventThread;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -114,7 +113,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
             sdf = new SimpleDateFormat(DateFormat.is24HourFormat(getApplicationContext()) ? "H:mm" : "h:mm a", Locale.getDefault());
 
-            EventBus.getDefault().register(this);
+            RxBus.get().register(this);
 
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             myLayout = inflater.inflate(R.layout.watchface, null);
@@ -147,7 +146,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
             mHandler.removeCallbacks(mStatusChecker);
         }
 
-        @Subscribe(threadMode = ThreadMode.MAIN)
+        @Subscribe(thread = EventThread.MAIN_THREAD)
         public void onEvent(DataMap dataMap) {
             if (sortAndStore == null)
                 sortAndStore = new SortAndStore();
@@ -155,14 +154,14 @@ public class WatchFaceService extends CanvasWatchFaceService {
             sortAndStore.organizeData(dataMap);
         }
 
-        @Subscribe(threadMode = ThreadMode.MAIN)
+        @Subscribe(thread = EventThread.MAIN_THREAD)
         public void onEvent(final String path) {
             if (path.equals(Constants.REMOVE_WATCHFACE)) {
                 removeWatchFace();
             }
         }
 
-        @Subscribe(threadMode = ThreadMode.MAIN)
+        @Subscribe(thread = EventThread.MAIN_THREAD)
         public void onEven(FileStoredEvent event) {
             try {
                 gifDrawable = new GifDrawable(event.getFileModel().getData());
@@ -193,7 +192,7 @@ public class WatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onDestroy() {
-            EventBus.getDefault().unregister(this);
+            RxBus.get().unregister(this);
             super.onDestroy();
         }
 

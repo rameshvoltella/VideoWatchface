@@ -22,8 +22,7 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
-
-import org.greenrobot.eventbus.EventBus;
+import com.hwangjr.rxbus.RxBus;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -62,7 +61,7 @@ public abstract class TeleportService extends WearableListenerService {
                 DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
                 DataMap dataMap = dataMapItem.getDataMap();
 
-                EventBus.getDefault().post(dataMap);
+                RxBus.get().post(dataMap);
 
             } else if (event.getType() == DataEvent.TYPE_DELETED) {
                 Log.d("DataItem Deleted", event.getDataItem().toString());
@@ -200,7 +199,7 @@ public abstract class TeleportService extends WearableListenerService {
     public void onMessageReceived(MessageEvent messageEvent) {
         Log.d(TAG, "onMessageReceived() A message from watch was received:" + messageEvent.getRequestId() + " " + messageEvent.getPath());
 
-        EventBus.getDefault().post(messageEvent.getPath());
+        RxBus.get().post(messageEvent.getPath());
     }
 
     /***

@@ -44,12 +44,12 @@ import com.goldenpie.devs.videowatchface.utils.ApplicationPreference;
 import com.goldenpie.devs.videowatchface.utils.DetectWear;
 import com.goldenpie.stroketextview.StrokeTextView;
 import com.google.android.gms.wearable.Node;
+import com.hwangjr.rxbus.RxBus;
+import com.hwangjr.rxbus.annotation.Subscribe;
+import com.hwangjr.rxbus.thread.EventThread;
 import com.mariux.teleport.lib.TeleportClient;
 
 import org.apache.commons.io.FilenameUtils;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -111,7 +111,7 @@ public class MainActivity extends BaseActivity implements WatchFaceAdapter.Conte
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        EventBus.getDefault().register(this);
+        RxBus.get().register(this);
         mTeleportClient = new TeleportClient(this);
         applicationPreference = new ApplicationPreference(this);
         DetectWear.setNodesListener(this);
@@ -446,7 +446,7 @@ public class MainActivity extends BaseActivity implements WatchFaceAdapter.Conte
             super.onBackPressed();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(thread = EventThread.MAIN_THREAD)
     public void onWatchFaceSended(WatchFaceSenderEvent event) {
         if (!BuildConfig.DEBUG)
             Answers.getInstance().logCustom(new CustomEvent("WATCH_FACE_APPLIED"));

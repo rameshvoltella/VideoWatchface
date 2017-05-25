@@ -9,9 +9,9 @@ import com.goldenpie.devs.videowatchface.model.BytesPart;
 import com.goldenpie.devs.videowatchface.model.DataModel;
 import com.goldenpie.devs.videowatchface.model.db.FileModel;
 import com.google.android.gms.wearable.DataMap;
+import com.hwangjr.rxbus.RxBus;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -126,7 +126,7 @@ public class SortAndStore{
 
         Log.i(TAG, "Store video file end");
         Log.i(TAG, "Post event begin");
-        EventBus.getDefault().post(new FileStoredEvent(fileModel));
+        RxBus.get().post(new FileStoredEvent(fileModel));
         Log.i(TAG, "Post event end");
     }
 

@@ -1,7 +1,7 @@
 <resources>
     <string name="banner_ad_unit_id">ca-app-pub-1074153481364318/1004809783</string>
 
-    <string name="app_name">Video Watch Face</string>
+    <string name="app_name">Video WatchFace</string>
     <string name="watch_status">Watch is %s</string>
     <string name="connected">connected</string>
     <string name="not_connected">not connected</string>
