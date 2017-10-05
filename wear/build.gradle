@@ -1,11 +1,10 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
-    lintOptions{
+    lintOptions {
         checkReleaseBuilds false
         abortOnError false
     }
@@ -40,8 +39,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
     }
 }
 
@@ -51,13 +50,15 @@ dependencies {
     compile project(':constants')
     compile project(':stroketextview')
 
-    compile "com.google.android.support:wearable:2.0.0"
-    compile "com.google.android.gms:play-services-wearable:10.2.4"
-    compile 'com.jakewharton:butterknife:8.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
-    provided "org.projectlombok:lombok:1.16.14"
+    compile "com.google.android.support:wearable:2.0.4"
+    provided "com.google.android.wearable:wearable:2.0.4"
+    compile "com.google.android.gms:play-services-wearable:11.4.0"
+    compile 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    provided "org.projectlombok:lombok:1.16.18"
+    annotationProcessor "org.projectlombok:lombok:1.16.18"
 
-    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.2'
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.6'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
 }
